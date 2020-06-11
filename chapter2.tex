@@ -1,10 +1,99 @@
 \chapter{Background}
 
-\section{Modeling musical intonation}
+\section{Adjusting musical intonation}
 
-\section{Existing auto-tuning systems}
+\subsection{Story: what we learned from Antares}
 
-\section{Data-driven versus model-based approaches}
+For two decades, Antares Auto-Tune has been the world standard for professional pitch correction. We note that other tools exist, such as Melodyne. However, the way that these tools model pitch is not significantly different from how it is modeled in Auto-Tune. \cite{eckard2016}
+
+Andy Hildebrand founded Jupiter Systems, which later became Antares Audio Technology, in 1997. He got his PhD in electrical engineering at the University of Illinois, where he got a PhD in signal processing. His full-time job involved signal processing on seismic data for oil exploration. He wrote: ``Around 1995 I was at a trade show, it was me and a couple partners, and we were with a person who was distributing our products. His wife was there, and we were talking about what products would be interesting to do next. His wife said, ``Well, Andy, why don't you make me a box that would have me sing in tune?'' I looked around at the table, and everyone just stared at their lunch plates, they didn't say a word.
+
+So I thought, ``boy, that's a lousy idea.'' About eight or nine months into the year, I'd gone to work for a different project, and I came back to that idea, I said, ``you know, that's pretty straightforward to do, I'll do that.'' At the same trade show a year later I had producers ripping it out of my hands.'' In the interview, Hildebrand expressed surprise at the fact that artists did not simply use the Auto-Tune software as intended, to discretely fix a singer's pitch, but instead used extreme settings that produce a robotic effect. He described Western music as having a long history of innovations, and placed Auto-tuning into that continuum. 
+
+\subsubsection{Used by professional artists}
+\textit{Sunday Morning} Maroon 5 or \textit{Toxic} by Britney Spears both used Auto-tune in the expected manner. 
+
+Initial goal: not everyone can sing in tune. How about if we automatically fix it? simple, not always satisfying, led to new musical style. \textit{Buy U a Drank (Shawty Snappin')} by T-Pain (feat. Yung Joc) starting at 0:02. \textit{Die For You} by The Weeknd, i.e., at 1:24 (rich voice at 0:28), or \textit{What The Price} by Migos, i.e., at 0:17 or especially 0:26, 0:44. Electropop. \textit{Anything could happen} by Ellie Goulding compare 0:00 to 0:08 to 2:28 Ke\$ha \textit{Die Young} with auto-tuning versus reconstructed. Miley Cyrus \textit{Party in the USA} 0:09 subtle versus 0:43 effect electropop versus her natural voice \textit{The Backyard Sessions - ``Jolene''} \url{https://youtu.be/wOwblaKmyVw}. Criticism, e.g., \url{https://theblackandwhite.net/36566/opinion/blogs/artists-should-stay-acoustic-auto-tune-too-often-artificial-and-overused/}. Daft Punk \textit{Harder, better, faster, stronger} 1:37 Dance/Electronic.
+
+\subsubsection{How does Auto-Tune work?}
+The Auto-Tune Pro Manual \cite{antares:2018} describes in detail the program's functionality. This section describes the features that are relevant for comparison to approach proposed in this thesis. Auto-Tune features two modes of operation: Auto Mode, which is optimized for real-time pitch correction and effects, or for automatic adjustments, and Graph Mode, which provides a user interface for precise, manual editing of the pitch and timing. Given that the Graph Mode enables the user to be as musically refined and nuanced as he or she wishes to be, we focus on the Auto Mode, which is designed to be used in a similar context to the proposed program. 
+
+Auto-Tune in Auto Mode takes as input a well-isolated, monophonic sound source. It continuously adjusts the input pitch towards a target pitch. The target pitch is the closest scale tone as determined by the current scale settings. The default scale is the chromatic, equal-tempered scale, but the user can customize the set of notes that is used by specifying the key and the scale. These can also be automatically detected using MIDI. Furthermore, the user can customize the frequency of every note.
+
+One of the most important parameters in Auto-Tune is the Retune Speed, which controls how rapidly the pitch correction is applied to the incoming audio. The units are milliseconds. If set to zero, the pitch is immediately moved to the target pitch, completely suppressing any vibrato or deviations in pitch. A setting between 10 and 50 milliseconds produces a more natural sounding effect. There is always a tradeoff between remaining close to the scale and preserving pitch variation. Some additional functionalities help reduce unwanted artifacts. One is the Humanize function, which adjust Retune Speed based on the length of the note. The Retune Speed is reduced on longer notes to prevent a static pitch, but kept fast for the short notes so that the melodic contour is accurate. Another is Flex-Tune. This control helps note transitions be less abrupt by only applying pitch correction when the performer approaches the target note. Controls also exist to amplify existing vibrato or to add a synthesized one. Finally, controls exist to preserve the singer's formant or even change it to sound like they have a longer or shorter throat. Voices are put into five categories: Soprano, Alto/Tenor, Bass, Instrument, Bass Instrument. This categorization also helps preserve a natural formant. 
+
+\subsubsection{Auto Setting: Assumptions}
+From all of this we see that the Auto-tune program is a rich source of musical processing techniques, ranging from discrete to special effects.
+
+Limiting factors
+- fixed pitches, discrete
+- by default, equal-tempered
+- Using a different type of intonation requires enough musical training to be aware of pitch ratios, etc...and even then there is no perfect solution (refer to Renaissance debates)
+- only uses vocal track, not backing track
+- only uses measured pitch, no other spectral characteristics of the singing voice
+- does not use musical context
+- no simple way to accommodate larger deviations from the scale besides disabling Auto-Tuning altogether on specific notes.
+
+Some musical aspects are lacking. Musical intonation is more complex than 12 values (will describe this in more detail later). Equal temperament provided more complexity, tradeoff.
+
+What were the assumptions behind Antares? First, that being close to the equal-tempered scale is, in practice, sufficient for being considered in tune. Second, it is based on the technical capacity of 19... Third, it assumes the singer is using the Western scale. Fourth, we only need the melody. How was the recipe? We can use a simple, frame-by-frame recipe to apply the corrections. This produces a compromise, but good enough in practice.
+
+Jaron Lanier: MIDI is limiting. Technical rigidity. Need space for the human. "One day in the early 1980s, a music synthesizer designer named Dave Smith casually made up a way to represent musical notes. It was called MIDI. His approach conceived of music from a keyboard player's point of view. MIDI was made of digital patterns that represented keyboard events like "key-down" and "key-up". 
+That meant it could not describe the curvy, transient expressions a singer or a saxophone player can produce. It could only describe the tile mosaic world of the keyboardist, not the watercolor world of the violin. But there was no reason for MIDI to be concerned with the whole of musical expression, since Dave only wanted to connect some synthesizers together so that you would have a larger palette of sounds while playing a single keyboard. In spite of its limitations, MIDI became the standard scheme to represent music in software. Music programs and synthesizers were designed to work with it, and it quickly proved impractical to change or dispose of all the software and hardware. MIDI became entrenched, and despite Herculean efforts to reform its on many occasions by a multi-decade-long parade of powerful international commercial, academic and professional organizations, it remains so. Standards and their inevitable lack of prescience posed a nuisance before computers of course."
+
+\subsection{Intervention Based Research}
+We can insert the development of an autotuning system into the intervention-based research (IBR) framework discussed by \cite{chandrasekaran2020ibr}. As Chandrasekaran \textit{et al} write, "confronting a theory with reality has been shown to produce knowledge". 
+Adjust our assumption
+Reassess technical capacity, data science
+What we know about pitch in singing
+Elements not included
+Rich history
+Western World scope
+What would a more musically refined autotuner consist of?
+What is our goal?
+
+\subsection{Trying to define a comprehensive theory. What frequencies will make a singing voice note sound in tune in its given context? An attempt at building a theory}
+Other extreme. Formula. define variables.
+Sample research question: note in tune.
+Subjective.
+
+What would be a theory. When is a note in tune? Not a comprehensive list, but tries to give an idea. Falls into the scope of music theory. 
+
+Musical: the genre of the piece being performed (including stylistic choices common for the genre, such as pitch bending), backing track instrumentation (number of instruments, timbre, relative amplitude), global and local tempo, length of the given note, harmonic context, melodic context 
+
+Vocal type of singer (soprano, alto, tenor, bass), Vocal characteristics of the singer, (Devaney vocal characteristics), performer's musical training (not related to singing), performer's vocal ability, vocal training style (classical, jazz, rock, etc...), location of a given pitch in the singer's vocal range, amount of vibrato, ADSR envelope of given note, pitch choices used in previous notes
+
+We have as variables (extensive but non exhaustive list): listener's musical genre, demographic (culture, musical training, hearing ability, subjective preference), audio quality (live, analog, digital, compression, sample rate, bit depth, speaker quality, number of channels), room acoustics (reverberance, distance from the source to the listener), perceived intonation of previous notes, relationship of listener to performer (self, parent lovingly listening to a child who is learning how to sing, fan of performer, audience member who bought an expensive ticket and wants their money's worth), teacher of student?
+
+physics of sound, oscillation
+
+A theory is clearly difficult to develop.
+
+\subsection{Stages of knowledge}
+Model to prevent being dazzled from complexity \cite{bacharach1989organizational}. Can apply this concept of theory to our engineering task/recipe. Stages of knowledge \cite{}. MIDI: stage 5, predictable. Basket of theories is incomplete. Use engineering in service of art: need to move up and down. This thesis moves down and provides a new intervention. 
+
+Pre-theory: can we learn useful information about intonation from other performances
+
+\subsubsection{In practice}
+
+Simplified model. Define objective accuracy measure. the singer is on or close to the correct pitch according to an objective measure. This can be a simple model (proximity to equal-tempered scale as defined in a score) or something more complex (theories of musical intonation, e.g., just intonation, etc...). These models can be complex, culture-specific, and sometimes conflicting (e.g, pythagorean versus just). Also, not all requirements can be perfectly met (book on renaissance musical theory). Still very complex, prone to exceptions. 
+
+Data-driven approach. Similarity to good performances of the same genre. We choose to use this approach. 
+
+\subsection{What do we want? My research question} A program that automatically adjusts pitch of singing voice given a fixed backing track. It should sound more in tune after the adjustment without sacrificing the overall quality of the sound. This leaves many open questions. What is in tune? What aspects of overall quality do we wish to preserve? What is automatic?
+
+Use patterns from performances. What is the best way for the program to access audio features and context to make good predictions? How do we evaluate? How should we represent pitch: notes, frames? How do we apply the shifts? How do we preserve natural sound? What is our scope? Hobby karaoke, post-processing.
+
+\subsection{Where does this kind of work fit in science? Why deep learning. Data-driven versus model-based approaches}
+Currently shown to produce good results on ill-defined tasks. SOA. 
+In the field of audio processing, deep learning has proven to be a technology that lets us move beyond MIDI, representing audio at the level of the sample or spectrogram bin. The software and hardware developed for deep learning tasks are powerful enough to process audio data in its full complexity and preserve its richness of audio.
+Not currently explainable, but active research (cite).
+Thesis is a small piece of this puzzle.
+Avoid strong assumptions \cite{wager2019causal}.
+Risk assessment: failure, discrimination.
+Population demographics give no reason not to have a balanced dataset. Need to address genre.
+practical use, how to address mistakes.
+Even if accuracy is not perfect, can gain insights by analyzing the predictions of the model. Can be used for ear training. The user can correct the few off-pitches.
 
 % This is a figure in landscape orientation
 %\begin{sidewaysfigure}
