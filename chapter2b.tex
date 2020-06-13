@@ -1,0 +1,58 @@
+\chapter{Designing technology for music: intervention-based design and avoiding technical lock-in}
+\label{chap:ibr}
+
+Jaron Lanier: MIDI is limiting. Technical rigidity. Need space for the human. "One day in the early 1980s, a music synthesizer designer named Dave Smith casually made up a way to represent musical notes. It was called MIDI. His approach conceived of music from a keyboard player's point of view. MIDI was made of digital patterns that represented keyboard events like "key-down" and "key-up". 
+That meant it could not describe the curvy, transient expressions a singer or a saxophone player can produce. It could only describe the tile mosaic world of the keyboardist, not the watercolor world of the violin. But there was no reason for MIDI to be concerned with the whole of musical expression, since Dave only wanted to connect some synthesizers together so that you would have a larger palette of sounds while playing a single keyboard. In spite of its limitations, MIDI became the standard scheme to represent music in software. Music programs and synthesizers were designed to work with it, and it quickly proved impractical to change or dispose of all the software and hardware. MIDI became entrenched, and despite Herculean efforts to reform its on many occasions by a multi-decade-long parade of powerful international commercial, academic and professional organizations, it remains so. Standards and their inevitable lack of prescience posed a nuisance before computers of course."
+
+\subsection{Intervention Based Research}
+We can insert the development of an autotuning system into the intervention-based research (IBR) framework discussed by \cite{chandrasekaran2020ibr}. As Chandrasekaran \textit{et al} write, "confronting a theory with reality has been shown to produce knowledge". Intervention-based research helps us discover when elegant theories do not address the complexities of the real world. 
+Adjust our assumption
+Reassess technical capacity, data science
+What we know about pitch in singing
+Elements not included
+Rich history
+Western World scope
+What would a more musically refined autotuner consist of?
+What is our goal?
+
+ ``a refusal to let how things are stand in the way of how things ought to be.'' ``Pythagoreanism in their simple directness, and the pro- blems that arise when they are applied in practice. The proposed solution is too simple given the complexity of the situation.''``being driven by the assumption that there is a perfect solution to a particular problem.'' ``underlying psychosocial ten- dency to naively believe in simplistic theories'' \cite{parncutt2018psychocultural}
+
+\subsection{Stages of knowledge}
+Model to prevent being dazzled from complexity \cite{bacharach1989organizational}. Can apply this concept of theory to our engineering task/recipe. Stages of knowledge \cite{}. MIDI: stage 5, predictable. Basket of theories is incomplete. Use engineering in service of art: need to move up and down. This thesis moves down and provides a new intervention. 
+
+Pre-theory: can we learn useful information about intonation from other performances
+
+\subsubsection{In practice}
+
+Simplified model. Define objective accuracy measure. the singer is on or close to the correct pitch according to an objective measure. This can be a simple model (proximity to equal-tempered scale as defined in a score) or something more complex (theories of musical intonation, e.g., just intonation, etc...). These models can be complex, culture-specific, and sometimes conflicting (e.g, pythagorean versus just). Also, not all requirements can be perfectly met (book on renaissance musical theory). Still very complex, prone to exceptions. 
+
+Data-driven approach. Similarity to good performances of the same genre. We choose to use this approach.
+
+\subsection{Trying to define a comprehensive theory. What frequencies will make a singing voice note sound in tune in its given context? An attempt at building a theory}
+Other extreme. Formula. define variables.
+Sample research question: note in tune.
+Subjective.
+
+What would be a theory. When is a note in tune? Not a comprehensive list, but tries to give an idea. Falls into the scope of music theory. 
+
+Musical: the genre of the piece being performed (including stylistic choices common for the genre, such as pitch bending), backing track instrumentation (number of instruments, timbre, relative amplitude), global and local tempo, length of the given note, harmonic context, melodic context 
+
+Vocal type of singer (soprano, alto, tenor, bass), Vocal characteristics of the singer, (Devaney vocal characteristics), performer's musical training (not related to singing), performer's vocal ability, vocal training style (classical, jazz, rock, etc...), location of a given pitch in the singer's vocal range, amount of vibrato, ADSR envelope of given note, pitch choices used in previous notes
+
+We have as variables (extensive but non exhaustive list): listener's musical genre, demographic (culture, musical training, hearing ability, subjective preference), audio quality (live, analog, digital, compression, sample rate, bit depth, speaker quality, number of channels), room acoustics (reverberance, distance from the source to the listener), perceived intonation of previous notes, relationship of listener to performer (self, parent lovingly listening to a child who is learning how to sing, fan of performer, audience member who bought an expensive ticket and wants their money's worth), teacher of student?
+
+physics of sound, oscillation
+
+A theory is clearly difficult to develop.
+
+
+\subsection{Where does this kind of work fit in science? Why deep learning. Data-driven versus model-based approaches}
+Currently shown to produce good results on ill-defined tasks. SOA. 
+In the field of audio processing, deep learning has proven to be a technology that lets us move beyond MIDI, representing audio at the level of the sample or spectrogram bin. The software and hardware developed for deep learning tasks are powerful enough to process audio data in its full complexity and preserve its richness of audio.
+Not currently explainable, but active research (cite).
+Thesis is a small piece of this puzzle.
+Avoid strong assumptions \cite{wager2019causal}.
+Risk assessment: failure, discrimination.
+Population demographics give no reason not to have a balanced dataset. Need to address genre.
+practical use, how to address mistakes.
+Even if accuracy is not perfect, can gain insights by analyzing the predictions of the model. Can be used for ear training. The user can correct the few off-pitches.
