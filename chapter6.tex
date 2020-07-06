@@ -1,42 +1,6 @@
-\chapter{Results}
-\subsection{Results on the synthesized set}
-Our MSE was reduced to 0.049 for training data, 0.062 for validation data, and 0.077 for test data, which corresponds to 22, 25, and 28 cents, respectively. We can conclude that the proposed model works on unseen signals if the detuning behavior is similar to that of the synthetic training signals. In the next section, we test our model on real-world singing signals.
+\chapter{Conclusion}
 
-\subsection{Subjective listening test}
-\label{sec:subjective-test}
+\section{Conclusion}
+This experiment is the first iteration of a deep learning model that estimates pitch correction for a monophonic vocal track using the instrumental accompaniment track as reference. Our results on a CNN with a GRU layer indicate that spectral information in the accompaniment and vocal tracks is useful for determining the amount of pitch correction required at a note level. In chapter \ref{sec:thesis-timeline}, I describe the next steps on this project.
 
-Given that we do not have ground-truth shifts for real-world performances, we use a subjective test to evaluate the proposed model's performance. Listeners compared the original performances to those pitch-shifted using the proposed autotuner. They also compared both versions to the output of a baseline pitch correction system. We designed the baseline to shift each note to the nearest equal-tempered scale degree. Given its design, the program applies shifts of at most 50 cents. We used note-wise pYIN and TD-PSOLA for note parsing and shifting like we did for the proposed model, so the only difference between the outputs is the amount of shift.
-
-We randomly sampled 4 12-second clips from each of the 24 test performances---original and pitch shifted---controlling for vocals presence in 70\% of the frames. We lowered this threshold if four such clips could not be found. We then faded the recording in and out during the first and last seconds. The process resulted in 96 performance clips with 3 versions per clip. The audio samples are publicly available\footnote{\href{https://saige.sice.indiana.edu/research-projects/deep-autotuner/}{https://saige.sice.indiana.edu/research-projects/deep-autotuner/}}.
-
-We generated a blind paired comparison test. Each listener was randomly assigned 10 clips per test but could take the test more than once. For each clip, the listener was randomly assigned 2 out of the 3 versions for comparison. For example, a listener might compare the baseline output of a clip to the original performance clip. They could listen to the samples as much as they wished and restrict the playback to a smaller window. We asked people to select the version they found more accurate, referring to harmonic alignment between the singing voice and the backing track. We also asked them to select the version they found more natural, but received the feedback that users heard no difference, confirming that our TD-PSOLA implementation usually produced clean results. At the beginning of the test, we included links to the original performances of each featured song and two examples to listen to in advance. The test was voluntary and anonymous. Listeners were not aware of the three different cases being compared, only that they were evaluating comparative pitch quality. 10 different subjects with formal musical training provided a total of 138 responses. 
-
-We created a ``quiz'' question to make sure that responses for each quiz were valid. In this question, the original was paired with a version where every note was shifted by a random amount up to 100 cents, and selected to sound noticeably out of tune. All participants answered correctly, which may be due to the fact that they were all musically trained. A musically untrained person who gave feedback on the test did not answer the question correctly.
-
-\subsection{Results on the subjective listening test}
-\label{sec:subjective-results}
-Globally, in pairs where the subjects compared the proposed program to the original performance, they selected the proposed 33 times and the original 35 times, for a success rate of 49\% with a one-sided binomial test p-value of 0.45. The baseline versus the original produced numbers 24 and 34, or 41\% success rate with p-value 0.12. The proposed model versus the baseline produced 31 and 29, or a success rate of 52\% with p-value 0.45. These global numbers themselves do not suggest an advantage in using either pitch corrector. The number of responses is also quite small, which leaves uncertainty in these responses because not all versions of all 96 clips were covered and each clip is quite different. In future work, we plan to conduct a larger-scale subjective test.
-
-In our small sample, we found some patterns worth investigating once we conduct a larger test. One such pattern is that subjects might prefer proposed autotuned signals when the quality of the original singing is slightly off key, but not too far. We identify such cases by looking at note-level pitch deviation statistics (in cents) between the original performance and the ground-truth MIDI score, generously provided by Smule, Inc. For example, we computed the standard deviation of the cents differences between the original singing and the ground-truth MIDI score. We found that the subjects usually favor an autotuned example if the original was within a particular standard deviation range (between 40 and 60 cents). 19 out of 24, or 79\% of the preferred autotuned examples were in this range, compared to only 16\% (3 out of 19) preferred original examples. While we would need more data for reliable results, we expect this behavior due to the imperfectly tuned nature of our crowdsourced training data used as in-tune ground truth---only some noticeable amount of off-pitch can be fixed by the trained model. Meanwhile, the model is exposed only to up to a semitone pitch shift, suggesting that too much variation in the test signal cannot be fixed, either. 
-
-We also compared the proposed method to the baseline. In 18 out of 21 or 86\% of performances where the proposed model was selected, the median of the absolute value of deviations in cents within two semitones was less than 46. However, 8 out of 20, or 40\% of performances where the baseline was selected were in the same range. This second result again that the proposed model might work better when performances are already relatively accurate. See Table \ref{tab:result-autotune} for a summary. 
-
-\begin{table}[t]
-  \begin{center}
-  \vspace{-0.05in}
-    \caption{The subjective test results that contrast different distributions of the autotuned, baseline, and original examples. Section \ref{sec:subjective-results} describes the ranges in question.}
-    \begin{tabular}{|l||c|c|}
-    \hline
-      & Within range & Out of range \\
-      \hline
-      Preferred autotuned examples & 79\% & 21\% \\
-      Preferred original examples & 16\% & 84\% \\
-      \hline
-      Preferred autotuned examples & 87\% & 13\% \\
-      Preferred baseline examples & 22\% & 78\% \\
-      \hline
-    \end{tabular}
-    \vspace{-0.2in}
-    \label{tab:result-autotune}
-  \end{center}
-\end{table}
+% . Our analysis also shows the need for developing more ways of generating natural-sounding out-of-tune singing, and moving beyond the strong assumptions the current model is based on. While the current model outputs the amount by which singing should be shifted in pitch, the model can be extended to predicted the pitch-shifted signal directly. The proposed model improves musical intonation in some scenarios, but requires more robustness to provide an improvement on average over the original or baseline systems. The model can also be trained on different musical genres than Western popular music, especially genres with more fluidly varying pitch, when data is available. 
