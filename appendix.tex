@@ -73,6 +73,7 @@ Finally, we summarized these variable-length sequences of frame-wise differences
     \label{fig:pipeline}
 \end{figure}
 %Spectral clustering
+% - genres and bias
 \section{Spectral clustering}
 As suggested by the studies described in Section \ref{sec:intonation}, an advanced singer might produce wider pitch deviations, due to a pronounced vibrato or expressive variations such as pitch bending, time shifting, or harmonization, than a singer who sings close to the musical score but is slightly off pitch. For this reason, we didn't try to select performances based on a simple metric like average distance of singing pitch from the score. We also didn't attempt to directly model ``being in tune'', instead adopting a semi-supervised approach that clusters performances based on features generated from the deviations. We then chose which cluster to keep by listening to samples from each.
 
