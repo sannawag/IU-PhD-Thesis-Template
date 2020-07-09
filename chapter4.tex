@@ -70,7 +70,7 @@ Another useful tool is TD-PSOLA, the time-domain pitch-synchronous overlap add a
 \subfigure[]{\includegraphics[height=1.625in]{figures/cqt_comparison_4-2.pdf}}\hspace{-.15in}%\vspace{-.03in}
 \subfigure[]{\includegraphics[height=1.625in]{figures/cqt_comparison_5-2.pdf}}\hspace{-.15in}%\vspace{-.03in}
     \caption{
-    Constant-Q transform of the vocals and backing tracks computed using Librosa \cite{mcfee2015librosa}. We zoom into frequency bins 300 through 700 out of 1056 for better visibility. (a) shows the CQT of the backing track. The horizontal lines are due to constant pitches. (b) and (c) show the CQT of the vocals before and after the correction, respectively. (d) and (e) show the superposed vocals and backing track before and after corrections. The CQTs are binarized by the mean of their amplitude, which makes the louder components stand out for visibility (see Section \ref{sec:data-format-autotune}). In this example, we see that the correction shifted the pitch of the vocals up and centered it around the desired harmonics of the backing track (red circles). 
+    Constant-Q transform of the vocals and backing tracks computed using Librosa \cite{mcfee2015librosa}. We zoom into frequency bins 300 through 700 out of 1024 for better visibility. (a) shows the CQT of the backing track. The horizontal lines are due to constant pitches. (b) and (c) show the CQT of the vocals before and after the correction, respectively. (d) and (e) show the superposed vocals and backing track before and after corrections. The CQTs are binarized by the mean of their amplitude, which makes the louder components stand out for visibility (see Section \ref{sec:data-format-autotune}). In this example, we see that the correction shifted the pitch of the vocals up and centered it around the desired harmonics of the backing track (red circles). 
     }
     \label{fig:model-input-autotune}
 \end{figure*}
@@ -141,6 +141,9 @@ The error function is the Mean-Squared Error (MSE) between the pitch shift estim
 %- option of adding additional song-rnn
 The second version of the Deep autotuner removes the final dense layer, and instead applies a second GRU to the sequence of note representations output by the first GRU. It finally applies a dense layer to the full sequence to output a song-level prediction sequence. This version has the ability to include more temporal context, including spectral information from the chord progression in the backing track and long-term melodic patterns in the vocals. This second version of the network is deeper, which makes it more difficult to train. However, its lower weights can be initialized using parameters from the trained first version.
 
+\subsubsection{Applying the predicted pitch corrections}
+Once the program has output predicted pitch corrections, these can be applied to the to the vocals. The TD-PSOLA algorithm provides a natural sounding output with few artifacts. The shifting is applied constantly to every note, and subtle cross-fading is applied between legato notes to avoid glitches at the boundaries.
+
 %- post-processing focus
 \subsection{Post-processing focus}
 The neural network introduced in this thesis is not explicitly designed to work in real time. First, the system is designed for post-processing plug-ins such as are found in music apps like Smule. Second, the task of autotuning is challenging enough even given abundant computation time. 
@@ -167,11 +170,11 @@ As introduced in Section \ref{sec:proposed-autotune}, the Deep autotuner system 
 To detune the training data, the program shifts the magnitude CQT up or down. This is expected to not produce too noticeable artifacts that the program could learn instead of the pitch relationships. The one issue is formant shifting, but this is not a big concern when only shifting up to $\pm$100 cents. I experimented with shifting the training data using TD-PSOLA, but this did not produce noticeably better convergence, and increased the computational complexity due to the need to compute autocorrelation instead of simply shifting a matrix. 
 
 \subsubsection{De-tuning distributions}
-%- data de-tuning, different versions
-%    - runif
-%    - hmm
-%        - MIR-1K
-% rnn
+%- data de-tuning, different versions (ok)
+%    - runif (ok)
+%    - hmm (ok)
+%        - MIR-1K (ok)
+% rnn (ok)
 Every note was assigned a random shift sampled from a distribution. The first distribution used in this thesis is the random uniform distribution in the range [-1, 1]. The shift maps to the logarithmic scale of cents, which in turn produces a linear shift of the CQT spectrogram. Random uniformly distributed shifts are very simple to implement, and provides the model with plenty of examples of a wide variety of shifts, ranging from zero---which is useful, because singers are not likely to sing every note out of tune---to many large ones. The downside is that this de-tuning technique is not based on real intonation patterns in out-of-tune singing. Furthermore, it is based on the strong and likely incorrect assumption that the detuning for every notes is independent from other notes.
 
 A Gaussian HMM addresses both of the shortcomings of the random uniform distribution in a simple manner. The proposed HMM outputs deviations in cents from the equal-tempered scale. These deviations are represented as the difference between the equal-tempered frequency output by the HMM used to parse notes, described in Section \ref{ref:notes}, and the median of the measured frame-wide pYIN pitch. As before, the equal-tempered scale can be replaced with any other division of the octave. 
@@ -205,26 +208,58 @@ The HMM model pitch deviation is not the most complex model that could be used f
 
 \section{Data pre-processing details/Format}
 \label{sec:data-format-autotune}
-We convert the normalized audio signals using the CQT for its translational invariance along the frequency axis. The CQT process covers 5.5 octaves with a resolution of 16 bins per semitone. The lowest frequency is 125 Hz. The top and bottom 16 bins are used as a buffer for pitch shifting, then truncated so that every input has dimension 1024. We use a frame size of 92 ms and a hop size of 11 ms. The vocals and backing track CQTs form two of the three input channels to the neural network. For the third channel, to contrast the difference between the first two channels, we binarize the two CQT spectrograms using the mean modulus as a threshold, a technique used in computer vision \cite{sezgin2004survey}. We then take the bitwise disagreement of the two matrices based on the assumption that the in-tune singing voice, better aligned with the backing track, will cancel out more harmonic peaks than the out-of-tune tracks. Fig. \ref{fig:model-input-autotune} illustrates the data format. In future work, we plan to explore different input formats, including omitting the binarized channel.
-%- CQT parameters, etc…
-%- tried third channel, did not help
-%- tried the binary channel but did not help (plot)?
-%- Tried TD-PSOLA, expensive but not better
-
-\section{Data post-processing details/Format}
-%psola
-\cite{charpentier1986diphone}
-
+The audio signals are normalized before they are transformed using the CQT. The CQT covers 5.5 octaves with a resolution of 16 bins per semitone. The lowest frequency is 125 Hz. The top and bottom 16 bins are used as a buffer for pitch shifting, then truncated so that every input has dimension 1024. The frame size spans 92 ms and the hop size 11 ms. The vocals and backing track CQTs form two input channels to the neural network. In previous work, I experimented with using a third channel that would help bring out the contrast between the first two channels. I binarized the two CQT spectrograms using the mean modulus as a threshold, a technique used in computer vision \cite{sezgin2004survey}. I then took the bitwise disagreement of the two matrices based on the expectation that the in-tune singing voice, better aligned with the backing track, would cancel out more harmonic peaks than the out-of-tune tracks. Fig. \ref{fig:model-input-autotune} illustrates the three channels. It includes the binarized CQT before and after shifting though the third channel was ultimately left out, because it helps visualize the shift. Surprisingly, though the convergence with the third channel was better for multiple epochs, the loss with two channels ultimately dropped below its counterpart. The difference took long enough to appear that I only discovered it because I had forgotten to shut down the training for the two versions of the model after having already concluded that the third channel improved the results. 
+%- CQT parameters, etc… (ok)
+%- tried third channel, did not help (ok)
+%- tried the binary channel but did not help (plot)? (ok)
+%- Tried TD-PSOLA, expensive but not better (ok)
 
 %Experimental setup
 \section{Experimental setup}
 \label{sec:experiments-autotune}
 \subsection{Training setup}
-We use the Adam optimizer \cite{kingma2014adam}, initialized with a learning rate of 0.00005. We feed one note at a time to the model as a minibatch of seven differently pitch-shifted versions. We apply gradient clipping \cite{pascanu2013difficulty} with a threshold of 100. We measure validation loss every 500 songs and save the model with the best result. 
-%- loss function, etc…
-%- Adam
+The program uses the Adam optimizer \cite{kingma2014adam}. It processes one note at a time as a minibatch of seven differently pitch-shifted versions. It does not include batch normalization because the different versions of the same note are not \textit{i.i.d}. When using the second GRU layer that bases the prediction on the sequence of notes, the outputs for each note are stored, then input to the GRU. 
+
+The program applies gradient clipping \cite{pascanu2013difficulty} with a threshold of 100. It reports validation loss every 500 songs and save the model with the best result along with the latest one. 
+%- loss function, etc… (ok)
+%- Adam (ok)
 \subsection{Initialization}
-The convolutional parameters are initialized using He \cite{he2015delving}, and the GRU hidden state of the first note of every song is initialized using a normal distribution with $\mu=0$ and $sd=0.0001$.
+The convolutional parameters are initialized using He \cite{he2015delving}, and the GRU hidden state of the first note of every song is initialized using a normal distribution with $\mu=0$ and $sd=0.0001$. The hidden state of the note sequence GRU is initialized in the same way. When using the note sequence GRU, the weights from the note-by-note model can optionally be used to initialize the lower layers. These lower layers can also be ``frozen'' for some epochs before being trained in the context of the full model. 
+
+\subsection{Experiments}
+In this thesis, I report test results on a set of different configurations, listed in Table \ref{table:experiments}. First, I experiment with the baseline model, which is a note-by-note model that de-tunes notes using a random uniform distribution. I report results for learning rates 0.00001 and 0.000005, as experiments with larger learning rates did not converge. I then choose the best learning rate for a note-by-note model with HMM-based de-tuning. I then report results for the extended model, with both de-tuning techniques and both learning rates. Finally, I add initialization of the lower layers with the trained parameters from the third note-by-note model and weight freezing for 7 epochs, and report results using both de-tuning techniques. 
+
+\begin{table*}
+\centering
+\begin{tabularx}{\columnwidth}{ |X|X|X|X| } 
+\hline
+\multicolumn{4}{|c|}{\textbf{Experiment settings}}\\
+\hline\hline
+\textbf{Model names} & \textbf{Learning rate} & \textbf{Initialization} & \textbf{De-tuning} \\
+\hline\hline
+Note-runif-1e-5 & 0.00001  & He, Gauss & Uniform \\
+\hline
+Note-runif-5e-6 & 0.000005 & He, Gauss & Uniform \\
+\hline
+Note-HMM-1e-5 & 0.00001 & He, Gauss & HMM \\ 
+\hline
+Song-runif-1e-5 &  0.00001 & He, Gauss & Uniform \\ 
+\hline
+Song-runif-5e-6 &  0.000005 & He, Gauss& Uniform \\ 
+\hline
+Song-HMM-1e-5 & 0.00001 & He, Gauss & HMM \\ 
+\hline
+Song-HMM-5e-6 & 0.000005 & He, Gauss & HMM \\ 
+\hline
+Song-HMM-pretrain-1e-5 & 0.00001 & ``Note-HMM-1e-5'' weights, Gauss & HMM \\ 
+\hline
+Song-runif-pretrain-1e-5 & 0.00001 & ``Note-HMM-1e-5'' weights, Gauss & Uniform\\
+\hline
+\end{tabularx}
+\label{table:experiments}
+\caption{List of experiments}
+\end{table*}
+
 %- initialization of weights
 %- pre-training
 %Experiments
@@ -234,5 +269,3 @@ The convolutional parameters are initialized using He \cite{he2015delving}, and 
 %- hmm by sequence
 %- learning rates
 %- + pre-training
-
-%We then shift every note by a random amount along the continuous logarithmic scale of cents. We generate 7 detuned versions of each song. 
