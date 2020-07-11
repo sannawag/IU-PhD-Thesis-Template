@@ -1,4 +1,4 @@
-\chapter{Deep autotuner: technical presentation of the proposed system}
+\chapter{Deep autotuner: technical presentation}
 \label{chap:thesis-autotuner}
 In this chapter, I describe the proposed autotuning system, which I call \textit{Deep Autotuner} \cite{wager2020deep}. I start by discussing related work in pitch correction. Given that not much work has been done on the topic, I consider work on similar tasks such pitch detection, and relevant techniques in the larger areas of deep learning and signal processing. I then describe in detail the structure of the neural network, the data preparation steps---including de-tuning and feature extraction, the training configuration, and the experimental setup. 
 
@@ -76,7 +76,7 @@ Another useful tool is TD-PSOLA, the time-domain pitch-synchronous overlap add a
 \end{figure*}
 
 %Proposed model
-\section{The proposed pitch correction system}
+\section{The proposed system}
 \label{sec:proposed-autotune}
 %- harmonic alignment (ok)
 The proposed model predicts pitch correction based the CQT of the monophonic vocals and the backing track. Its structure is built on the assumption that the backing track has clearly identifiable pitches---a chord progression---which serves as a reference for the vocals. The program can then use the harmonic alignment between the vocals and backing tracks to make its predictions. Figure \ref{fig:model-input-autotune} shows the CQT of vocals and backing track excerpts of a few notes before and after applying predicted pitch corrections. In the excerpt, the backing track pitches are mostly constant, meaning that a chord is likely being held. After the correction, the vocals appear to be more closely aligned with the backing track, as can be seen in a CQT combining the two tracks. The shifts are subtle enough that they are difficult to see in the separate tracks. 
@@ -91,7 +91,14 @@ The model is trained in a supervised manner. Training data consists of pairs of 
 %    - Discretization for control, constant shift
 \subsection{Note-by-note processing}
 \label{ref:notes}
-A second strong assumption behind the Deep autotuner design is that a singer targets a specific frequency per note, around which all pitch variations are centered. Given this assumption, the network corrects the pitch of one note by shifting all frames that belong to that note by a constant. The first step to processing the song note-by-note is to find the note boundaries from the original singing performance, given that the program does not utilize a musical score. Multiple approaches exist for detecting note boundaries: I investigated three. 
+A second strong assumption behind the Deep autotuner design is that a singer targets a specific frequency per note, around which all pitch variations are centered. Given this assumption, the network corrects the pitch of one note by shifting all frames that belong to that note by a constant. The first step to processing the song note-by-note is to find the note boundaries from the original singing performance, given that the program does not utilize a musical score. Multiple approaches exist for detecting note boundaries: I investigated three. The results can be visualized in Figure \ref{fig:note-parsing}.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{figures/note_parse_comparison_attention_5.eps}
+    \caption{Comparison of three different note boundary detection outputs for an excerpt from \textit{Attention} by Charlie Puth. The purple line shows the pYIN frame-wise pitch contour. The vertical lines show the note boundaries. The first and second approaches use the frame-wise pYIN pitch output. The first approach assigns note boundaries at the beginnings and ends of unvoiced sections. The second approach fits a Gaussian HMM to the pitch contour, and uses the hidden state sequence of equal-tempered scale frequencies along with unvoiced frames to assign boundaries. The third one uses the pYIN note-wise output. In this example, the unvoiced frame approach fails to split some legato passages into individual notes and the pYIN note approach is the most sensitive, assigning the largest number of notes. Sometimes this is musically relevant: for example, the lyrics in the three-step descending sequence around frames 300 to 400 are ``knew-that-I, knew-that-I, knew-that-I'', splitting each step into three musical events. The pYIN note detection detects these boundaries. However, it misses some notes---for example, the first note after frame 600---and its boundaries are not exactly aligned with the frames that switch between being voiced and unvoiced---for example, in multiple locations between frames 800 and 900.}
+    \label{fig:note-parsing}
+\end{figure}
 
 The first was to define every transition silence as a note boundary. To this end, I analyzed the vocals pitch using the frame-wise probabilistic YIN (pYIN) algorithm \cite{mauch2014pyin}, implemented as a Vamp plugin in \cite{cannam2010sonic}. The frame-wise pitch is set to 0 for unvoiced frames, which makes it possible to easily treat transitions between voiced and unvoiced frames as note boundaries. A small amount of smoothing was required to avoid glitches in the case where a single frame had value 0. The advantage of this technique is that it minimizes artifacts during shifting. Any discontinuities arising due to pitch shifting a section of an audio recording are insignificant because the audio is silent at the discontinuity points. The disadvantage is that this note parsing technique fails to split notes when they are connected, though this is common in \textit{legato} melodies. This means that if one part of a legato passage is out of tune and another part isn't, a shift that would correct the out-of-tune part would de-tune the other part.
 
@@ -206,7 +213,7 @@ The parameters learned from the MIR-1K dataset are in Table \ref{tab:detuning-hm
 
 The HMM model pitch deviation is not the most complex model that could be used for the task. It could be replaced by a RNN that uses additional information, such as absolute frequency---given that a singer might be more likely to sing sharp or flat based on the register---or spectral information. One could go another step further and synthesize out-of-tune singing using a WaveNet and/or adversarial training.
 
-\section{Data pre-processing details/Format}
+\subsection{Data pre-processing details}
 \label{sec:data-format-autotune}
 The audio signals are normalized before they are transformed using the CQT. The CQT covers 5.5 octaves with a resolution of 16 bins per semitone. The lowest frequency is 125 Hz. The top and bottom 16 bins are used as a buffer for pitch shifting, then truncated so that every input has dimension 1024. The frame size spans 92 ms and the hop size 11 ms. The vocals and backing track CQTs form two input channels to the neural network. In previous work, I experimented with using a third channel that would help bring out the contrast between the first two channels. I binarized the two CQT spectrograms using the mean modulus as a threshold, a technique used in computer vision \cite{sezgin2004survey}. I then took the bitwise disagreement of the two matrices based on the expectation that the in-tune singing voice, better aligned with the backing track, would cancel out more harmonic peaks than the out-of-tune tracks. Fig. \ref{fig:model-input-autotune} illustrates the three channels. It includes the binarized CQT before and after shifting though the third channel was ultimately left out, because it helps visualize the shift. Surprisingly, though the convergence with the third channel was better for multiple epochs, the loss with two channels ultimately dropped below its counterpart. The difference took long enough to appear that I only discovered it because I had forgotten to shut down the training for the two versions of the model after having already concluded that the third channel improved the results. 
 %- CQT parameters, etc… (ok)
@@ -215,7 +222,7 @@ The audio signals are normalized before they are transformed using the CQT. The 
 %- Tried TD-PSOLA, expensive but not better (ok)
 
 %Experimental setup
-\section{Experimental setup}
+\section{Experimental configuration}
 \label{sec:experiments-autotune}
 \subsection{Training setup}
 The program uses the Adam optimizer \cite{kingma2014adam}. It processes one note at a time as a minibatch of seven differently pitch-shifted versions. It does not include batch normalization because the different versions of the same note are not \textit{i.i.d}. When using the second GRU layer that bases the prediction on the sequence of notes, the outputs for each note are stored, then input to the GRU. 
@@ -227,6 +234,7 @@ The program applies gradient clipping \cite{pascanu2013difficulty} with a thresh
 The convolutional parameters are initialized using He \cite{he2015delving}, and the GRU hidden state of the first note of every song is initialized using a normal distribution with $\mu=0$ and $sd=0.0001$. The hidden state of the note sequence GRU is initialized in the same way. When using the note sequence GRU, the weights from the note-by-note model can optionally be used to initialize the lower layers. These lower layers can also be ``frozen'' for some epochs before being trained in the context of the full model. 
 
 \subsection{Experiments}
+\label{sec:experiment-list}
 In this thesis, I report test results on a set of different configurations, listed in Table \ref{table:experiments}. First, I experiment with the baseline model, which is a note-by-note model that de-tunes notes using a random uniform distribution. I report results for learning rates 0.00001 and 0.000005, as experiments with larger learning rates did not converge. I then choose the best learning rate for a note-by-note model with HMM-based de-tuning. I then report results for the extended model, with both de-tuning techniques and both learning rates. Finally, I add initialization of the lower layers with the trained parameters from the third note-by-note model and weight freezing for 7 epochs, and report results using both de-tuning techniques. 
 
 \begin{table*}
