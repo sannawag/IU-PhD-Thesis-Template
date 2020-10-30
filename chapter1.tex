@@ -1,5 +1,5 @@
 \chapter{Introduction}
-\label{sec:thesis-intro}
+\label{chap:thesis-intro}
 %\section{Post-processing of user-generated audio: An overview}
 %\label{sec:challenges-intro}
 %1. Introduction to the introduction. 
@@ -13,14 +13,14 @@
 %        7. no musical score: harmonize improvise
 %        8. respect nuanced variations of sung pitch 
 %        9. estimates amount of unintended pitch shift
-Music making with family, friends, and the wider community is one of the universally enjoyed activities across the world. In recent years, virtual options have emerged in applications such as Smule, Spotify, Cadenza, YouTube, and TikTok. These enable people to share their recordings with their peers in other locations, and provide tools for collaboration and audio processing that are only possible in the digital realm. One of these tools is post-processing: editing the track after it has been recorded to make it the best possible quality. One type of editing is automatic adjustment pitch to make the performance sound in tune. This particular post-processing tool is called autotuning and is the focus of this thesis. 
+Music making with family, friends, and the wider community is one of the universally enjoyed activities across the world. In recent years, virtual options have emerged in applications such as Smule, Spotify, Cadenza, YouTube, and TikTok. These enable people to share their recordings with their peers in other locations, and provide tools for collaboration and audio processing that are only possible in the digital realm. One of these tools is post-processing: editing the track after it has been recorded to make it the best possible quality. One type of editing is automatic pitch adjustment to make the performance sound in tune. This particular post-processing tool is called autotuning and is the focus of this thesis. 
 
-Some users opt to use professional audio-editing software. Other users treat the production of audio more recreationally. For example, a Smule user may spend a few minutes recording a karaoke performance in their room or car. Though the user may not wish to spend much time editing the recording, they often still use post-processing tools built into the app that apply autotuning or other effects such as reverb. These tools do not make the recording sound professional, but can result in an outcome that the user is pleased with and is motivated to share with friends. They are also useful for users who do not have access to professional software or recording spaces, or find their usage difficult because they are not trained in audio editing. 
+Some users opt to use professional audio-editing software. Other users treat the production of audio more recreationally. For example, a Smule user may spend a few minutes recording a karaoke performance in their room or car. Though the user may not wish to spend much time editing the recording, they often still use post-processing tools built into the app that apply automatic pitch correction or other effects such as reverb. These tools do not make the recording sound professional, but can result in an outcome that the user is pleased with and is motivated to share with friends. They are also useful for users who do not have access to professional software or recording spaces, or find their usage difficult because they are not trained in audio editing. 
 
-Why not just leave the recording unaltered? As anyone who has tried to photograph a beautiful landscape might relate to, capturing the natural colors, beauty, and atmosphere of the scene is very challenging. Applying color filters and cropping or rotating can refine the result, turning it into a better artistic experience. In the same way, a performance heard live versus recorded can be a substantially different artistic experience, where the listener is hearing the performance as it was recorded through the microphone, and without the atmosphere in the room. Post-processing of audio can help make it nicer to listen to in its own setting. A parallel can be seen when a person uses a spell-checker to improve the quality of their writing, even when writing simple text such as an email. The ability of the spell-checker to remove minor errors produces a more polished result, which can make a big difference, especially given the permanent nature of content shared online. % can provide tools that are different from live. Image of flower
+Why not just leave the recording unaltered? As anyone who has tried to photograph a beautiful landscape might relate to, capturing the natural colors, beauty, and atmosphere of the scene is very challenging. Applying color filters and cropping or rotating can refine the result, turning it into a better artistic experience. In the same way, a performance heard live versus recorded can be a substantially different artistic experience, where the listener is hearing the performance as it was recorded through the microphone, and without the atmosphere in the room. Post-processing of audio can help make it nicer to listen to in its digital setting. A parallel can be seen when a person uses a spell-checker to improve the quality of their writing, even when writing simple text such as an email. The ability of the spell-checker to remove minor errors produces a more polished result, which can make a big difference, especially given the permanent nature of content shared online. % can provide tools that are different from live. Image of flower
 
 \section{Overview}
-This thesis addresses the task of developing the equivalent of a spell-checker for musical intonation: a system for automatic pitch correction. Existing commercial autotuning programs usually discretize the pitch to a small number of values \cite{antares:2016}. Vocal track notes are usually shifted to be centered around pitches in a user-defined score, or mapped to the closest pitch among the twelve equal-tempered scale degrees. The resulting model of pitch does not reflect the smooth variation of pitch in continuously controlled instruments such as voice or violin, and can produce a robotic sounding result. The proposed Deep autotuner is a data-driven system to automatic pitch correction of solo singing performances. It is a deep neural network trained to predict pitch shifts based on audio patterns in real-world singing examples. Through these examples, the system is exposed to both incorrect intonation, for which it learns a correction, and intentional pitch variation, which it learns to preserve. It treats pitch as a continuous value rather than a discrete set of notes and does not rely on a musical score, thus allowing for improvisation and harmonization in the singing performance. The fact that it is not bound to a discrete set of notes also means that it can be adapted to many different musical cultures, regardless of the scales used in these cultures. 
+This thesis addresses the task of developing the equivalent of a spell-checker for musical intonation: a system for automatic pitch correction. Existing commercial systems usually discretize the pitch to a small number of values \cite{antares:2016}. Vocal track notes are usually shifted to be centered around pitches in a user-defined score, or mapped to the closest pitch among the twelve equal-tempered scale degrees. The resulting model of pitch does not reflect the smooth variation of pitch in continuously controlled instruments such as voice or violin, and can produce a robotic sounding result. The proposed pitch correction system uses a data-driven approach for automatic pitch correction of solo singing performances. It is a deep neural network trained to predict pitch shifts based on audio patterns in real-world singing examples. Through these examples, the system is exposed to both incorrect intonation, for which it learns a correction, and intentional pitch variation, which it learns to preserve. It treats pitch as a continuous value rather than a discrete set of notes and does not rely on a musical score, thus allowing for improvisation and harmonization in the singing performance. The fact that it is not bound to a discrete set of notes also means that it can be adapted to many different musical cultures, regardless of the scales used in these cultures. 
 
 %\section{Background}
 %2. Personal background: overarching topic
@@ -69,19 +69,20 @@ This thesis addresses the task of developing the equivalent of a spell-checker f
 %            1. Can be used for other collection
 %        5. Explore how this system could be turned into a usable system in practical situations
 
-The work in this thesis contributes to the recent field of music information retrieval, which lies in the intersection of music and technology. Given fast developments in technology, much research remains to be done in this area. The autotuning system proposed in this thesis is developed in the context of the following questions: How can recent technological advances be used in the service of music and art in general? How does this system fit into the context of millenia of music theory? How can we incorporate music theory into music technology, and how can technology provide new means for artistic expression and development? How does it relate to existing autotuning systems such as Antares Auto-Tune? I note that the term ``Auto-Tune'' is a proprietary name by Antares for a widely used system. In this thesis, I refer to Antares Auto-Tune when writing about this system, and use ``autotuner'' or ``Deep autotuner'' when referring to the proposed system. 
-As far as I know, the autotuning system proposed in this thesis is the first one that incorporates concepts from psychoacoustics, physics of sound, and cultural practices regarding musical intonation into its design. Its contributions include:
+The work in this thesis contributes to the recent field of music information retrieval, which lies in the intersection of music and technology. Given fast developments in technology, much research remains to be done in this area. The automatic pitch correction system proposed in this thesis is developed in the context of the following questions: How can recent technological advances be used in the service of music and art in general? How does this system fit into the context of millenia of music theory? How can we incorporate music theory into music technology, and how can technology provide new means for artistic expression and development? How does a data-driven approach relate to existing systems such as Antares Auto-Tune? 
+
+As far as I know, the automatic pitch correction system proposed in this thesis is the first one that incorporates concepts from psychoacoustics, physics of sound, and cultural practices regarding musical intonation into its design. Its contributions include:
 \begin{itemize}
     \item Predictions of pitch corrections based on the time-frequency content of the vocals and backing tracks i.e., the alignment of the harmonics
-    \item Use of the backing track chord progression to predict what shifts will make the vocals in tune
+    \item Use of the backing track chord progression to predict pitch shifts that make the vocals sound in tune
     \item A data-driven approach that is designed to preserve intended pitch variation while detecting unwanted deviations
-    \item A deep neural network architecture including convolutional layers for feature extraction and recurrent layers for sequential processing, adapted to the task of autotuning
-    \item Adaptability to any musical culture, as long as training data exists
+    \item An adaptation of the deep neural network architecture including convolutional layers for feature extraction and recurrent layers for sequential processing to the task of automatic pitch correction
+    \item Adaptability to any musical culture, as long as training data is available
     \item No need for a musical score
     \item A note boundary detection system
-    \item A first step towards a model-free approach to autotuning. Existing approaches tend to be model-based
-    \item The ``Intonation'' dataset of in-tune singing performances and the time-frequency magnitude transformation of the backing tracks
-    \item A commentary on how this system could be turned into a usable system in practical situations, despite the fact that it will not always make good predictions
+    \item A first step towards a model-free approach to automatic pitch corection. Existing approaches tend to be model-based.
+    \item The ``Intonation'' dataset of in-tune singing performances, including the time-frequency magnitude transformation of the backing tracks and other metadata
+    \item A commentary on how this system could be turned into a usable system in practical situations, despite the fact that it will make mistakes
 \end{itemize}
 
 \section{Challenges in generating a natural sounding result}
@@ -92,16 +93,14 @@ The priority with both is to output a result that sounds natural and aesthetical
 
 Realistic data is hard to generate. The first challenge is collecting examples of in-tune singing: Publicly available datasets of singing performances typically mix performances of all levels of singing. The second challenge---if using supervised training---is to design data pairs where, for example, each pair is identical except for the vocals pitch. Such pairs are difficult to come across naturally, making realistic data synthesis a viable approach.
 
-Approaches often involve error-prone or limiting data pre and post-processing steps. Autotuning involves error-prone note boundary and pitch tracking pre-processing steps that add errors that cannot be addressed in the pitch correction component of the system. Incorporating these data processing steps into the trainable part of the system is worth investigating.
-
 \section{Scope}
 %4. Scope of the topic
 %    1. Post-procesing
 %    2. amateur singing
 %    3. smartphone app
-The proposed system is designed for amateur singing and focuses on situations where a singer wishes to apply simple post-processing---for example, on their smartphone---without using professional audio editing software. It requires for the vocals and backing track to be separate, and for the vocals to be monophonic and free of noise. The system is designed to be used as a post-processing tool. It may be adapted for real-time processing, but this task is out of the scope of the thesis.
+The proposed system is designed for amateur singing and focuses on situations where a singer wishes to apply simple post-processing---for example, on their smartphone---without using professional audio editing software. It requires for the vocals and backing track to be separate, and for the vocals to be monophonic and free of noise. The system is designed to be used as a post-processing tool. It may be adapted for real-time processing, but the task is out of the scope of this thesis.
 
-The system is built on some strong assumptions, which might not be accurate. First, that the backing track has clearly identifiable pitches---a chord progression---which serves as a reference for the vocals. Second, that a singer targets a specific frequency per note, around which all pitch variations are centered. Third, that the dataset we collect is in-tune enough for this prototype, despite consisting of amateur singing. %tune
+The system is built on some strong assumptions, which might not be accurate. First, that the backing track has clearly identifiable pitches---a chord progression---which serves as a reference for the vocals. Second, that a singer targets a specific frequency per note, around which all pitch variations are centered. Third, that the dataset used to train it is in-tune enough for this prototype, despite consisting of amateur singing. %tune
 %5. Outline your epistemological and ontological position
 %    1. In this thesis, compare a model-driven approach to the selected data-driven approach, describe how %each contributes to increased knowledge, and why I chose a data-driven approach
 %    2. Address issues that can come up when a data-driven approach outputs an error
@@ -121,7 +120,7 @@ The proposed deep neural network is trained in a supervised manner on pairs on i
 %    2. Subjective test finds that … 
 
 \section{Outline}
-This section describes the layout of the thesis.
+The layout of the thesis is as follows:
 %9. Discuss the layout of the thesis
 %    1. 2: musical intonaton: ratio-based, empirically derived, auto-tune, conceptualization in this thesis
 %    2. 3: model free: music representation in software, model-driven vs model-free approaches, concepts of %control, interpretability, and expressivity, reason behind DNN
@@ -129,25 +128,28 @@ This section describes the layout of the thesis.
 %    4. 5: dataset generation, Smule 
 %    5. 6: results
 %    6. 7: conclusion and future work
+\subsection{Chapter \ref{chap:thesis-intro}}
+The current chapter provides an summary of the contribution in this thesis. It gives an overview of the proposed system, along with challenges that arise when trying to correct pitch automatically. It describes the scope of the proposed system along with the main findings. 
+
 \subsection{Chapter \ref{chap:intonation}}
-Chapter \ref{chap:intonation} provides a musical background for the design of the Deep autotuner. It places it in the discussion on musical intonation over millenia. It then introduces two standard conceptualizations of musical intonation, relevant definitions, and musical cultures that use intonation in different ways. This chapter also introduces Antares Auto-Tune, one of the music industry standards for pitch correction, discussing its advantages and disadvantages, and what can be learned from it when developing the proposed system.
+Chapter \ref{chap:intonation} provides a musical background for the design of the proposed system. It places it in the discussion on musical intonation over millenia. It then introduces two standard conceptualizations of musical intonation, relevant definitions, and musical cultures that use intonation in different ways. This chapter also introduces Antares Auto-Tune, one of the music industry standards for pitch correction, discussing its advantages and disadvantages, and what can be learned from it when developing the proposed system.
 
 \subsection{Chapter \ref{chap:tech-background}}
 %    2. 3: model free: music representation in software, model-driven vs model-free approaches, concepts of %control, interpretability, and expressivity, reason behind DNN
-Chapter \ref{chap:tech-background} discusses the technical background. It provides an overview of music representation in software and compares model-driven approaches to music technology model-free approaches,  including how they affect control, interpretability, and expressivity of the programs. It concludes with reason behind the choice of a deep neural network for the task of autotuning.
+Chapter \ref{chap:tech-background} discusses the technical background. It provides an overview of music representation in software and compares model-driven approaches to music technology model-free approaches,  including how they affect control, interpretability, and expressivity of the programs. It concludes with reasons behind the choice of a deep neural network for the task of automatic pitch correction.
 
 \subsection{Chapter \ref{chap:thesis-autotuner}}
-Chapter \ref{chap:thesis-autotuner} provides a technical presentation of the Deep autotuner. It starts with an overview of related work in music information retrieval, deep learning, and audio signal processing. It then describes in detail the proposed system and the experimental configuration.
+Chapter \ref{chap:thesis-autotuner} provides a technical presentation of the proposed system. It starts with an overview of related work in music information retrieval, deep learning, and audio signal processing. It then describes in detail the proposed system and the experimental configuration.
 %    3. 4: technical presentation: related work in MIR, DL, ASP, proposed system, and experimental %configuration
 
 \subsection{Chapter \ref{chap:thesis-damp}}
-Chapter \ref{chap:thesis-damp} describes how the ``Intonation'' dataset was collected, details about the dataset, and how the collection technique can be used to generate datasets for other tasks where the target is subjective, as it is in the case of musical intonation. 
+Chapter \ref{chap:thesis-damp} describes how the ``Intonation'' dataset was collected, details about the dataset, and how the collection technique can be used to generate datasets for other tasks where the target is subjective, as it is in the case of musical intonation. It also describes shortcomings related to genre bias in the current dataset, and how this issue can be fixed in future work.
 
 \subsection{Chapter \ref{chap:results}}
 Chapter \ref{chap:results} describes results both on the synthesized test set and in the listening test. It shows that...
 
 \subsection{Chapter \ref{chap:conclusion}}
-Chapter \ref{chap:conclusion} concludes the thesis, providing a summary and exploring future work. Future work includes exploration of end-to-end systems for autotuning. 
+Chapter \ref{chap:conclusion} concludes the thesis, providing a summary and exploring future work. Future work includes exploration of end-to-end systems for automatic pitch correction. 
 
 
 %    4. 5: dataset generation, Smule 
