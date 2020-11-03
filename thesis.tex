@@ -25,6 +25,24 @@
 \usepackage{enumitem}
 \usepackage{url}
 \usepackage{xcolor}
+\usepackage{glossaries}
+
+\makenoidxglossaries
+%This could be in a separate file and imported using \input:
+\newacronym{midi}{MIDI}{Musical Instrument Digital Interface}
+\newacronym{nmf}{NMF}{Non-negative Matrix Factorization}
+\newacronym{dnn}{DNN}{Deep Neural Network}
+\newacronym{stft}{STFT}{Short-Time Fourier Transform}
+\newacronym{psola}{TD-PSOLA}{Time-Domain Pitch-Synchronous Overlap and Add}
+\newacronym{cqt}{CQT}{Constant-Q Transform}
+\newacronym{hcqt}{HCQT}{Harmonic Constant-Q Transform}
+\newacronym{mir}{MIR}{Music Information Retrieval}
+\newacronym{cnn}{CNN}{Convolutional Neural Network}
+\newacronym{gru}{GRU}{Gated Recurrent Unit}
+\newacronym{pyin}{pYIN}{Probabilistic YIN}
+\newacronym{hmm}{HMM}{Hidden Markov Model}
+\newacronym{relu}{ReLU}{Rectified Linear Unit}
+\newacronym{mse}{MSE}{Mean-Squared Error}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography
@@ -146,6 +164,11 @@
 \setlength\cftbeforefigskip{\baselineskip}  %manually set spacing between entries
 \listoffigures
 \end{singlespace}
+
+\clearpage
+
+\gls(
+\printnoidxglossary[type=\acronymtype,numberedsection=autolabel]
 
 \clearpage
 
