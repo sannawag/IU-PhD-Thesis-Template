@@ -1,7 +1,7 @@
 \chapter{Results}
 \label{chap:results}
 %Link to audio examples (ok)
-In this chapter, I compare the results of the experiments listed in Section \ref{sec:experiments-autotune}. I first examine the outputs on artificially de-tuned test data, and then on real-world karaoke examples from the MIR-1K dataset \cite{hsu2009improvement}. Based on histograms of the pitch deviations of the different outputs and their comparisons to the ground-truth Intonation dataset distribution, I choose one configuration. I use this configuration for an informal subjective listening test. Audio examples are publicly available\footnote{\href{https://adding-this-link}}.
+In this chapter, I compare the results of the experiments listed in Section \ref{sec:experiments-autotune}. I first examine the outputs on artificially de-tuned test data, and then on real-world karaoke examples from the MIR-1K dataset \cite{hsu2009improvement}. Based on histograms of the pitch deviations of the different outputs and their comparisons to the ground-truth Intonation dataset distribution, I choose one configuration. I use this configuration for an informal subjective listening test. Audio examples are publicly available\footnote{adding this link}.
 
 %Synthesized set
 \section{Experiments on the synthesized test set}
@@ -17,9 +17,9 @@ The first two models trained for a longer time than the rest. When I tested them
     \label{fig:losses_plots}
 \end{figure}
 
-To compare the quality of the various configurations, I generated histograms of the pitch behavior in the results. These are displayed in Figures \ref{fig:test-comparison} and \ref{fig:mir-1k-comparison} for the synthesized test examples and the real-world MIR-1K dataset, respectively. The histograms show the pitch distributions before and after corrections. The pitch behavior is measured by generating the \gls{hmm} described in Section \ref{sec:notes} to assign an equal-tempered scale degree to each frame of audio. I then measured the signed difference in cents between the equal-tempered scale degree and pYIN frequencies assigned to each frame. A wider histogram would indicate that more frames of audio are centered at pitches far from any equal-tempered scale degree. While this metric is arbitrary, it allows for comparison between different datasets.
+To compare the quality of the various configurations, I generated histograms of the pitch behavior in the results. These are displayed in Figures \ref{fig:test-comparison} and \ref{fig:mir-1k-comparison} for the synthesized test examples and the real-world MIR-1K dataset, respectively. The histograms show the pitch distributions before and after corrections. The pitch behavior is measured by generating the \gls{hmm} described in Section \ref{sec:notes} to assign an equal-tempered scale degree to each frame of audio. I then measured the signed difference in cents between the equal-tempered scale degree and \gls{pyin} frequencies assigned to each frame. A wider histogram would indicate that more frames of audio are centered at pitches far from any equal-tempered scale degree. While this metric is arbitrary, it allows for comparison between different datasets.
 
-In order to interpret these histograms, I also compared them to histograms of the input data, which consisted either of de-tuned data or of the MIR-1K dataset, histograms from the Intonation dataset ground truth, and those from professional performances from a separate dataset, DSD-100 \cite{SiSEC16}. These are displayed in Figure \ref{fig:dataset-comparison}. In Figure \ref{fig:test-comparison}, we see that the input data de-tuned using a random uniform distribution was more spread than the data de-tuned using the \gls{hmm}. The output histogram that stands out is the third one, ``Silence-\gls{hmm}'', which is more symmetric than the others and less spread. The same configuration produces the least spread results in Figure \ref{fig:mir-1k-comparison}. The reference datasets in Figure \ref{fig:dataset-comparison} show that the Intonation ground truth has a distribution similar to the output of the ``Silence-\gls{hmm}'' model. This result made me choose the ``Silence-\gls{hmm}'' model for the subjective listening test.
+In order to interpret these histograms, I also compared them to histograms of the input data, which consisted either of de-tuned data or of the MIR-1K dataset, histograms from the Intonation dataset ground truth, and those from professional performances from a small, separate dataset, DSD-100 \cite{SiSEC16} of 150 tracks. The histograms are displayed in Figure \ref{fig:dataset-comparison}. In Figure \ref{fig:test-comparison}, we see that the input data de-tuned using a random uniform distribution was more spread than the data de-tuned using the \gls{hmm}. The output histogram that stands out is the third one, ``Silence-\gls{hmm}'', which is more symmetric than the others and less spread. The same configuration produces the least spread results in Figure \ref{fig:mir-1k-comparison}. The reference datasets in Figure \ref{fig:dataset-comparison} show that the Intonation ground truth has a distribution similar to the output of the ``Silence-\gls{hmm}'' model. This result made me choose the ``Silence-\gls{hmm}'' model for the subjective listening test.
 
 Figure \ref{fig:dataset-comparison} also displays the limitations of using the Intonation dataset as ground truth. The professional-level DSD-100 dataset has a narrower spread than the Intonation dataset, showing how different the pitch distribution is between amateur singers selected for accurate pitch, and professionals. The ``Silence-\gls{hmm}'' model is able to shift the pitch deviation distribution of both synthesized and real-world data so that its corrected distribution matches that of the ground truth. Without professional-level data, though, it will not produce an outcome that has a distribution like the DSD-100 dataset.
 
@@ -52,7 +52,9 @@ Figure \ref{fig:dataset-comparison} also displays the limitations of using the I
 \section{Subjective listening test}
 \label{sec:subjective-test}
 %- Listening test setup
-I conducted a subjective listening test to qualitatively assess the pitch correction algorithm's performance. I selected ten twenty-second samples from the MIR-1K original dataset, which I considered musically interesting. I had not heard the pitch correction results in these performances before when selecting the samples. I chose twenty seconds because this sample length gave listeners an idea of how the algorithm performed on a full musical phrase. Any ambiguity due to the sample length could be resolved by adding a comment. Table \ref{table:audio-samples} shows the samples along with their musical characteristics and why I chose them. 
+I conducted a subjective listening test to qualitatively assess the pitch correction algorithm's performance. As listening material, I selected ten twenty-second samples from the MIR-1K original dataset, which I considered musically interesting. I had not heard the pitch correction results in the performances before when selecting the samples. I generated pairs comparing either the baseline performance to the original, or the corrected to the original. 
+
+I chose twenty seconds as a sample duration because this sample length gave listeners an idea of how the algorithm performed on a full musical phrase. Any ambiguity due to the sample length could be resolved by adding a comment. The sample names and the musical reasons behind the choices are in Table \ref{table:audio-samples}. One surprise was that some of the samples included soft \gls{midi} drones that played the melody as a reference for the singer. This type of drone was nearly nonexistant in the ``Intonation'' dataset used to train the model.
 
 \begin{table*}
 \centering
@@ -62,21 +64,21 @@ I conducted a subjective listening test to qualitatively assess the pitch correc
 \hline\hline
 \textbf{Sample name} & \textbf{Start second} & \textbf{Description} \\
 \hline\hline
-Ariel 1 & 0 & Mostly close to an accurate pitch; A couple notes are off by a larger amount, and one by a semitone \\
+Ariel 1 & 0 & Slightly off throughout; One prominent note is off by a semitone.\\
 \hline
-Ariel 2 & 23 & Mostly slightly off, sometimes up to 50 cents off\\ 
+Ariel 2 & 23 & Sharp throughout\\ 
 \hline
 Annar 4 & 3 & In tune\\ 
 \hline
-Amy 7 & 27 & An audible MIDI drone is playing the melody\\
+Amy 7 & 27 & An audible MIDI drone is playing the melody. Some notes are on pitch, others are off. \\
 \hline
-Davidson 4 & 6 & Very low voice, mostly close but slightly off pitch \\ 
+Davidson 4 & 6 & Very low voice. Pitch is mostly close but slightly off. A very soft drone is playing the melody many octaves higher. \\ 
 \hline
-Bobon 4 & 2 & Melody has some very long notes; Pitch is often off, sometimes by more than 40 cents\\ 
+Bobon 4 & 2 & Melody has some very long notes; Pitch is often off, usually flat, often by about 50 cents\\ 
 \hline
-Geniusturtle 4 & 9 & One note is over 50 cents off, many jumps in the melody, one section is legato\\ 
+Geniusturtle 4 & 9 & Many notes are off, one by a semitone. There are many sustained notes and many jumps. A drone is playing the melody.\\ 
 \hline
-Stool 4 & 0 & Mildly off overall; the tempo is on the faster side; the melody has jumps; there is an audible MIDI drone\\ 
+Stool 4 & 0 & The pitch is off overall but never very far; The melody has many jumps; there is an audible MIDI drone\\ 
 \hline
 Fdps 4 & 17 & Slow tempo, jumps in the melody, a couple notes are off by more than 50 cents\\ 
 \hline
@@ -87,7 +89,7 @@ Jmzen 4 & 0 & Very far off overall\\
 \caption{Description of the audio samples from MIR-1K used for the subjective listening test, and their diverse characteristics that test the program under varying conditions}
 \end{table*}
 
-The question arises of whether a simple pitch correction technique could achieve comparable or superior results with significantly less time and resources. I generated a baseline algorithm for this reason. The baseline retains many the characteristics of the proposed model: it shifts each note by a constant to retain a natural sound, and assigns note boundaries where the pYIN pitch detection algorithm assigned silence. Its pitch corrections, however, are based on the equal-tempered scale. For each note, it computes the median pitch from the pYIN---which should be the longest note's median in legato sections treated as a single note. It then shifts the note so that its new median is the nearest equal-tempered scale degree. Figure \ref{fig:baseline_tuning} shows the behavior of the baseline algorithm.
+I generated a baseline algorithm to address the question of whether a simple pitch correction technique could achieve comparable or superior results with significantly less time and resources. The baseline retains many the characteristics of the proposed model: it shifts each note by a constant to retain a natural sound, and assigns note boundaries where the \gls{pyin} pitch detection algorithm assigned silence. Its pitch corrections, however, are based on the equal-tempered scale, which simplifies it but also risk limiting its scope. For each note, it computes the median pitch from the \gls{pyin}---which should be the longest note's median in legato sections treated as a single note. It then shifts the note so that its new median is the nearest equal-tempered scale degree. Figure \ref{fig:baseline_tuning} shows the behavior of the baseline algorithm.
 
 \begin{figure}[t]
     \centering
@@ -96,9 +98,10 @@ The question arises of whether a simple pitch correction technique could achieve
     \label{fig:baseline_tuning}
 \end{figure}
 
-For both algorithms, the pitch shifts applied to the audio were computed using \gls{psola}. The only difference between the outputs is the amount of shift. In a subjective test conducted in previous work, \cite{wager2020deep}, listeners were asked to select when comparing the original audio to the corrected audio which version sounded more natural. Listeners did not hear a difference between samples, which indicates that \gls{psola} doesn't produce a significant amount of artifacts that would make it difficult to rate the quality of the system only based on musical intonation instead of audio quality.
+For both algorithms, the pitch shifts applied to the audio were computed using \gls{psola}. The only difference between the outputs is the amount of shift. In a subjective test conducted in previous work, \cite{wager2020deep}, I asked listeners who compared the original audio to the corrected audio which version sounded more natural. Listeners did not hear a difference between samples, which indicates that \gls{psola} doesn't produce a significant amount of artifacts that would make it difficult to rate the quality of the system only based on musical intonation instead of audio quality.
 
-Each listener was assigned four samples: two pairs comparing the baseline outputs to the original, and two comparing the corrected outputs to the original using the ``Silence-\gls{hmm}'' model. The listeners did not know which algorithms were used in each pair. They were asked to indicate which performance they considered more accurate in terms of pitch, and could optionally leave comments. Tables \ref{tab:baseline-scores} and \ref{tab:original-scores} shows the results and anonymized comments for the baseline and corrected samples, respectively. A total of N participants provided M responses. From the results, we can see that [...].
+Listeners were amateur or professional-level musicians. Each listener was assigned four samples: two pairs comparing the baseline outputs to the original, and two comparing the corrected outputs to the original using the ``Silence-\gls{hmm}'' model. The listeners did not know which algorithms were used in each pair. They were asked to indicate which performance they considered more accurate in terms of pitch, and could optionally leave comments. Tables \ref{tab:baseline-scores} and \ref{tab:original-scores} shows the results and anonymized comments for the baseline and corrected samples, respectively. N participants provided a total M responses. 
+
 
 \begin{table}
   \begin{center}
@@ -165,18 +168,9 @@ Jmzen 1 & 0-0 & N/A \\
   \end{center}
 \end{table}
 
+\subsubsection{Analysis}
+The results indicate at a qualitative level that the proposed approach was preferable to the baseline. In half of the samples, listeners quite confidently chose the corrected version over the original, and in some of the remaining ones the choice was difficult. This indicates that the proposed approach didn't tend to make the performances worse, even in cases where it failed to provide solid corrections. The fact that listeners preferred it half of the time over 20 seconds indicates that it didn't make serious errors too often.
 
+It is striking to notice that many of the samples where the proposed approach was selected with confidence included a melody reference drone. As mentioned above, drones were nearly nonexistant in the ``Intonation'' dataset. The fact that the model performed well on these samples indicates that it might have learned how to effectively use reference pitches in the backing track, and that the reference melody made the solution more clear. This would mean that the model is behaving as expected---basing its corrections on the backing track pitch content---instead of learning, for example, a pitch distribution or ``scale'', and mapping the vocals pitches to it while ignoring the backing track. This could also mean that the model depends on the pitch content being closely related to the melody.
 
-
-%- Results
-%\subsection{Results on the subjective listening test}
-%\label{sec:subjective-results}
-%Globally, in pairs where the subjects compared the proposed program to the original performance, they selected the proposed 33 times and the %original 35 times, for a success rate of 49\% with a one-sided binomial test p-value of 0.45. The baseline versus the original produced numbers 24 %and 34, or 41\% success rate with p-value 0.12. The proposed model versus the baseline produced 31 and 29, or a success rate of 52\% with p-value %0.45. These global numbers themselves do not suggest an advantage in using either pitch corrector. The number of responses is also quite small, which leaves uncertainty in these responses because not all versions of all 96 clips were covered and each clip is quite different. In future work, we plan to conduct a larger-scale subjective test.
-
-%In our small sample, we found some patterns worth investigating once we conduct a larger test. One such pattern is that subjects might prefer proposed corrected signals when the quality of the original singing is slightly off key, but not too far. We identify such cases by looking at note-level pitch deviation statistics (in cents) between the original performance and the ground-truth MIDI score, generously provided by Smule, Inc. For example, we computed the standard deviation of the cents differences between the original singing and the ground-truth MIDI score. We found that the subjects usually favor a corrected example if the original was within a particular standard deviation range (between 40 and 60 cents). 19 out of 24, or 79\% of the preferred corrected examples were in this range, compared to only 16\% (3 out of 19) preferred original examples. While we would need more data for reliable results, we expect this behavior due to the imperfectly tuned nature of our crowdsourced training data used as in-tune ground truth---only some noticeable amount of off-pitch can be fixed by the trained model. Meanwhile, the model is exposed only to up to a semitone pitch shift, suggesting that too much variation in the test signal cannot be fixed, either. 
-
-%We also compared the proposed method to the baseline. In 18 out of 21 or 86\% of performances where the proposed model was selected, the median of the absolute value of deviations in cents within two semitones was less than 46. However, 8 out of 20, or 40\% of performances where the baseline was selected were in the same range. This second result again that the proposed model might work better when performances are already relatively accurate. See Table \ref{tab:result-autotune} for a summary. 
-
-
-%- Analysis
-
+The fact that the model without extension resulted in the histograms that most resembled the ground-truth data indicates that the extension layer was either useless for predictions or caused instability in training, despite pre-training of the feature extraction layers. One can hypothesize whether the broad temporal context provided by the extension layer is necessary for musical intonation, or whether pitch adjustments only require the local context, provided by the hidden state of the \gls{gru}, initialized with the last state of the previous note.
