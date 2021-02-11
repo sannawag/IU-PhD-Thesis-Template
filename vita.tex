@@ -1,10 +1,108 @@
-\chapter*{Vita}
+\chapter*{Curriculum Vitae}
 \addtocontents{toc}{
  \unexpanded{\unexpanded{\renewcommand{\cftchapdotsep}{\cftnodots}}}%  
 }
 \addcontentsline{toc}{chapter}{Curriculum Vitae}
 
-\doublespacing
-Vita may be provided by doctoral students only. The length of the vita is preferably one page. It may include the place of birth and should be written in third person. This vita is similar to the author biography found on book jackets.
+%%%%%%%%%%
+%-----CUSTOM COMMANDS FOR FORMATTING SECTIONS----------------------------------
+\newcommand{\CVItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\CVSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \small#3 & \small #4 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\CVSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \text{\small#1} & \text{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\CVSubItem}[1]{\CVItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\CVSubHeadingListStart}{\begin{itemize}[leftmargin=0.5cm, label={}]}
+% \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]} % Uncomment for US
+\newcommand{\CVSubHeadingListEnd}{\end{itemize}}
+\newcommand{\CVItemListStart}{\begin{itemize}}
+\newcommand{\CVItemListEnd}{\end{itemize}\vspace{-5pt}}
+%%%%%%%%%%
+
+%-----EDUCATION----------------------------------------------------------------
+\vspace{-30pt}
+\singlespacing
+\section*{EDUCATION}
+%\vspace{-8pt}
+  \CVSubHeadingListStart
+%    \CVSubheading % Example
+%      {Degree Achieved}{Years of Study}
+%      {Institution of Study}{Where it is located}
+    \CVSubheading
+      {{Doctor of Philosophy in Informatics $|$ \emph{\small{Music Track}}}}{Aug. 2014 -- Feb. 2021}
+      {Indiana University Bloomington}{Bloomington, Indiana, USA}
+    \CVSubheading
+      {Master of Science in Computer Science}{Aug. 2014 -- May 2018}
+      {Indiana University Bloomington}{Bloomington, Indiana, USA}
+    \CVSubheading
+      {{Bachelor of Music $|$ \emph{\small{Major: Bassoon, Minor: Mathematics}}}}{Aug. 2009 -- May 2014}
+      {Indiana University Bloomington}{Bloomington, Indiana, USA}
+  \CVSubHeadingListEnd
+
+%-----WORK EXPERIENCE----------------------------------------------------------
+
+\section*{WORK EXPERIENCE}
+%\vspace{-8pt}
+  \CVSubHeadingListStart
+  
+    \CVSubheading
+      {Research Scientist Intern, Music Intelligence Group}{Fall 2019 -- Winter 2020}
+      {Spotify S.A.}{New York City, NY}
+    \CVSubheading
+      {Applied Scientist Intern, Alexa Speech}{Summer 2019}
+      {Amazon, Inc.}{Santa Clara, CA}
+    \CVSubheading
+      {Audio Engineering Intern}{Summer 2018}
+      {Smule, Inc.}{San Francisco, CA}
+    \CVSubheading
+      {Software Engineering Intern, Android Audio}{Summer 2017}
+      {Google, Inc.}{Mountain View, CA}
+    \CVSubheading
+      {Teaching Assistant, Informatics and Computing}{Fall 2014 -- Spring 2016}
+      {Indiana University Bloomington}{Bloomington, Indiana, USA}
+    %\CVItemListStart
+    %\CVItem{INFO-I547: Music Information Processing: Audio }
+    %\CVItem{CSCI-B555: Machine Learning }
+    %\CVItem{INFO-I101:Introduction to Informatics}
+    %\CVItem{INFO-I201: Mathematical Foundations for Informatics}
+    %\CVItemListEnd
+  \CVSubHeadingListEnd
+
+
+%-----CONFERENCES AND PRESENTATIONS--------------------------------------------
+
+\section*{PUBLICATIONS AND PRESENTATIONS}
+
+\hspace{\parindent}\textbf{S. Wager, G. Tzanetakis, C. Wang, and M. Kim}. ``Deep Autotuner: A Pitch Correcting Network for Singing Performance''. in Proc. IEEE Int. Conf. Acoustics, Speech, and Signal Processing (ICASSP), 2020.
+
+\textbf{S. Wager, A. Khare, M. Wu, and S. Sundaram}. ``Fully learnable front-end for multi-channel acoustic modeling using semi-supervised learning,'' in Proc. IEEE Int. Conf. Acoustics, Speech, and Signal Processing (ICASSP), 2020.
+
+\textbf{S. Wager, G. Tzanetakis, S. Sullivan, C. Wang, J. Shimmin, M. Kim, and P. Cook}. ``Intonation: a dataset of quality vocal performances refined by spectral clustering on pitch congruence,'' in Proc. IEEE Int. Conf. Acoustics, Speech, and Signal Processing (ICASSP), 2019.
+
+\textbf{S. Wager and M. Kim}. ``Collaborative speech dereverberation: regularized tensor factorization for crowdsourced multi-channel recordings,'' in Proc. IEEE European Signal Processing Conf. (EUSIPCO), 2018.
+
+\textbf{S. Wager, L. Chen, M. Kim, and C. Raphael}. ``Towards expressive instrument synthesis through smooth frame-by-frame reconstruction: From string to woodwind,'' in Proc. IEEE Int. Conf. Acoustics, Speech and Signal Processing (ICASSP), 2017.
+
+
+
 
 \pagenumbering{gobble}

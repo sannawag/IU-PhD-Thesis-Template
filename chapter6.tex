@@ -1,49 +1,48 @@
-\chapter{Results}
+\chapter{Effect of deep pitch correction on pitch distribution and on the subjective listening experience}
 \label{chap:results}
 %Link to audio examples (ok)
-In this chapter, I compare the results of the experiments listed in Section \ref{sec:experiments-autotune}. I first examine the outputs on artificially de-tuned test data, and then on real-world karaoke examples from the MIR-1K dataset \cite{hsu2009improvement}. Based on histograms of the pitch deviations of the different outputs and their comparisons to the ground-truth Intonation dataset distribution, I choose one configuration. I use this configuration for an informal subjective listening test. Audio examples are publicly available\footnote{adding this link}.
+In this chapter, I compare the results of the experiments listed in Section \ref{sec:experiments-autotune}. I first examine the outputs on artificially de-tuned test data, and then on real-world karaoke examples from the MIR-1K dataset \cite{hsu2009improvement}. Based on histograms of the pitch deviations of the different outputs and their comparisons to the ground-truth Intonation dataset distribution, I choose one configuration. I use this configuration for an informal subjective listening test.
 
 %Synthesized set
 \section{Experiments on the synthesized test set}
 
-The validation loss curves for each experimental configuration are displayed in Figure \ref{fig:losses_plots}. For readability, the \gls{mse} is converted to absolute cents. The first three configurations did not use the song-level \gls{gru} extension, while the remaining three did. The last two configurations have different loss curves from the others because they were initialized using pre-trained weights. The initial large loss in these was due to the randomly initialized layers in the extension. One should note that the losses for different configurations are usually not comparable: the way the notes boundaries are assigned and the de-tuning techniques will all affect the value. How does error in cents correspond to musical accuracy? For perspective, 20 cents is the margin of error for some pitch detection algorithms \cite{kim2018crepe}. For intonation purposes, I think that 20 cents can sound out of tune, but starts to be acceptably close. An average error of 20 cents, which would include large errors, where the model corrected in the wrong direction, would be a highly accurate result. Even 30 cents could be considered a decent result for the same reason. 
-
-The first two models trained for a longer time than the rest. When I tested them on real-world data, I was not happy with the audio result, and decided to test the other models at an earlier stage in training. Test results for the third model, which was trained on 223,000 songs instead of up to 498,000 songs, turned out to produce superior results. In later sections, I describe how I determined this in a more objective manner. What is striking is that the validation loss in all curves has not converged. Additionally, some models reached very small \gls{mse} values. For example, the ``\gls{hmm}-\gls{hmm}'' model, which used \gls{hmm}s both to assign note boundaries and for de-tuning, reached 0.03, which corresponds to 17 cents average error. In practice, though, models that reached the lowest validation loss did not produce the best results on real-world data. I hypothesize that the models became too specialized for their specific configurations. 
-
-\begin{figure}[t]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{figures/losses_plots.png}
     \caption{Validation losses for the respective configurations. The subtitle refers, first, to the note parsing technique, second, to the de-tuning technique, and then whether the model includes the song-level \gls{gru} extension layer and whether the model was initialized using pre-trained weights.}
     \label{fig:losses_plots}
 \end{figure}
+The validation loss curves for each experimental configuration are displayed in Figure \ref{fig:losses_plots}. For readability, the \gls{mse} is converted to absolute cents. The first three configurations did not use the song-level \gls{gru} extension, while the remaining three did. The last two configurations have different loss curves from the others because they were initialized using pre-trained weights. The initial large loss in these was due to the randomly initialized layers in the extension. One should note that the losses for different configurations are usually not comparable: the way the notes boundaries are assigned and the de-tuning techniques will all affect the value. How does error in cents correspond to musical accuracy? For perspective, 20 cents is the margin of error for some pitch detection algorithms \cite{kim2018crepe}. For intonation purposes, I think that 20 cents can sound out of tune, but starts to be acceptably close. An average error of 20 cents, which would include large errors, where the model corrected in the wrong direction, would be a highly accurate result. Even 30 cents could be considered a decent result for the same reason. 
+
+The first two models trained for a longer time than the rest. When I tested them on real-world data, I was not happy with the audio result, and decided to test the other models at an earlier stage in training. Test results for the third model, which was trained on 223,000 songs instead of up to 498,000 songs, turned out to produce superior results. In later sections, I describe how I determined this in a more objective manner. What is striking is that the validation loss in all curves has not converged. Additionally, some models reached very small \gls{mse} values. For example, the ``\gls{hmm}-\gls{hmm}'' model, which used \gls{hmm}s both to assign note boundaries and for de-tuning, reached 0.03, which corresponds to 17 cents average error. In practice, though, models that reached the lowest validation loss did not produce the best results on real-world data. I hypothesize that the models became too specialized for their specific configurations. 
 
 To compare the quality of the various configurations, I generated histograms of the pitch behavior in the results. These are displayed in Figures \ref{fig:test-comparison} and \ref{fig:mir-1k-comparison} for the synthesized test examples and the real-world MIR-1K dataset, respectively. The histograms show the pitch distributions before and after corrections. The pitch behavior is measured by generating the \gls{hmm} described in Section \ref{sec:notes} to assign an equal-tempered scale degree to each frame of audio. I then measured the signed difference in cents between the equal-tempered scale degree and \gls{pyin} frequencies assigned to each frame. A wider histogram would indicate that more frames of audio are centered at pitches far from any equal-tempered scale degree. While this metric is arbitrary, it allows for comparison between different datasets.
 
-In order to interpret these histograms, I also compared them to histograms of the input data, which consisted either of de-tuned data or of the MIR-1K dataset, histograms from the Intonation dataset ground truth, and those from professional performances from a small, separate dataset, DSD-100 \cite{SiSEC16} of 150 tracks. The histograms are displayed in Figure \ref{fig:dataset-comparison}. In Figure \ref{fig:test-comparison}, we see that the input data de-tuned using a random uniform distribution was more spread than the data de-tuned using the \gls{hmm}. The output histogram that stands out is the third one, ``Silence-\gls{hmm}'', which is more symmetric than the others and less spread. The same configuration produces the least spread results in Figure \ref{fig:mir-1k-comparison}. The reference datasets in Figure \ref{fig:dataset-comparison} show that the Intonation ground truth has a distribution similar to the output of the ``Silence-\gls{hmm}'' model. This result made me choose the ``Silence-\gls{hmm}'' model for the subjective listening test.
-
-Figure \ref{fig:dataset-comparison} also displays the limitations of using the Intonation dataset as ground truth. The professional-level DSD-100 dataset has a narrower spread than the Intonation dataset, showing how different the pitch distribution is between amateur singers selected for accurate pitch, and professionals. The ``Silence-\gls{hmm}'' model is able to shift the pitch deviation distribution of both synthesized and real-world data so that its corrected distribution matches that of the ground truth. Without professional-level data, though, it will not produce an outcome that has a distribution like the DSD-100 dataset.
-
-\begin{figure}[t]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{figures/test-comparison.png}
     \caption{Pitch deviation histograms of the synthesized test data before and after corrections. Input data de-tuned using a random uniform distribution was more spread than the data de-tuned using the \gls{hmm}. The third output histogram, ``Silence-\gls{hmm}'' stands out as being the most symmetric.}
     \label{fig:test-comparison}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[t!]
     \centering
     \includegraphics[width=\columnwidth]{figures/mir-1k-comparison.png}
     \caption{Pitch deviation histograms of the real-world MIR-1K data before and after corrections. The third output histogram, ``Silence-\gls{hmm}'', again stands out as being the most symmetric.}
     \label{fig:mir-1k-comparison}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[t!]
     \centering
     \includegraphics[width=\columnwidth]{figures/dataset-comparison.png}
     \caption{Pitch deviation histograms of various datasets. The first row displays artificially de-tuned training data. Note that it appears quite similar to the MIR-1K real-world data before corretions, shown in the bottom left subplot. The left subplot in the middle row shows the distribution of the Intonation ground truth. This resembles the histogram of the MIR-1K data after corrections using the ``Silence-\gls{hmm}'' model, shown in the bottom right subplot. The middle-right subplot shows the distribution of a small, professional dataset. It looks strikingly different from the rest.}
     \label{fig:dataset-comparison}
 \end{figure}
 
+
+In order to interpret these histograms, I also compared them to histograms of the input data, which consisted either of de-tuned data or of the MIR-1K dataset, histograms from the Intonation dataset ground truth, and those from professional performances from a small, separate dataset, DSD-100 \cite{SiSEC16} of 150 tracks. The histograms are displayed in Figure \ref{fig:dataset-comparison}. In Figure \ref{fig:test-comparison}, we see that the input data de-tuned using a random uniform distribution was more spread than the data de-tuned using the \gls{hmm}. The output histogram that stands out is the third one, ``Silence-\gls{hmm}'', which is more symmetric than the others and less spread. The same configuration produces the least spread results in Figure \ref{fig:mir-1k-comparison}. The reference datasets in Figure \ref{fig:dataset-comparison} show that the Intonation ground truth has a distribution similar to the output of the ``Silence-\gls{hmm}'' model. This result made me choose the ``Silence-\gls{hmm}'' model for the subjective listening test.
+
+Figure \ref{fig:dataset-comparison} also displays the limitations of using the Intonation dataset as ground truth. The professional-level DSD-100 dataset has a narrower spread than the Intonation dataset, showing how different the pitch distribution is between amateur singers selected for accurate pitch, and professionals. The ``Silence-\gls{hmm}'' model is able to shift the pitch deviation distribution of both synthesized and real-world data so that its corrected distribution matches that of the ground truth. Without professional-level data, though, it will not produce an outcome that has a distribution like the DSD-100 dataset.
 
 
 %- Loss curves
@@ -52,6 +51,13 @@ Figure \ref{fig:dataset-comparison} also displays the limitations of using the I
 \section{Subjective listening test}
 \label{sec:subjective-test}
 %- Listening test setup
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=10cm]{figures/baseline_tuning.png}
+    \caption{Example of the baseline algorithm's corrections. The algorithm determines note boundaries in the same way as the selected model, assigning them where silence occurs. It computes the median of each note, and shifts it so that its new median is the nearest equal-tempered scale degree.}
+    \label{fig:baseline_tuning}
+\end{figure}
+
 I conducted a subjective listening test to qualitatively assess the pitch correction algorithm's performance. As listening material, I selected ten twenty-second samples from the MIR-1K original dataset, which I considered musically interesting. I had not heard the pitch correction results in the performances before when selecting the samples. I generated pairs comparing either the baseline performance to the original, or the corrected to the original. 
 
 I chose twenty seconds as a sample duration because this sample length gave listeners an idea of how the algorithm performed on a full musical phrase. Any ambiguity due to the sample length could be resolved by adding a comment. The sample names and the musical reasons behind the choices are in Table \ref{table:audio-samples}. One surprise was that some of the samples included soft \gls{midi} drones that played the melody as a reference for the singer. This type of drone was nearly nonexistant in the ``Intonation'' dataset used to train the model.
@@ -91,14 +97,7 @@ Jmzen 4 & 0 & Very far off overall\\
 
 I generated a baseline algorithm to address the question of whether a simple pitch correction technique could achieve comparable or superior results with significantly less time and resources. The baseline retains many the characteristics of the proposed model: it shifts each note by a constant to retain a natural sound, and assigns note boundaries where the \gls{pyin} pitch detection algorithm assigned silence. Its pitch corrections, however, are based on the equal-tempered scale, which simplifies it but also risk limiting its scope. For each note, it computes the median pitch from the \gls{pyin}---which should be the longest note's median in legato sections treated as a single note. It then shifts the note so that its new median is the nearest equal-tempered scale degree. Figure \ref{fig:baseline_tuning} shows the behavior of the baseline algorithm.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\columnwidth]{figures/baseline_tuning.png}
-    \caption{Example of the baseline system's corrections. The system determines note boundaries in the same way as the selected model, assigning them where silence occurs. It computes the median of each note, and shifts it so that its new median is the nearest equal-tempered scale degree.}
-    \label{fig:baseline_tuning}
-\end{figure}
-
-For both algorithms, the pitch shifts applied to the audio were computed using \gls{psola}. The only difference between the outputs is the amount of shift. In a subjective test conducted in previous work, \cite{wager2020deep}, I asked listeners who compared the original audio to the corrected audio which version sounded more natural. Listeners did not hear a difference between samples, which indicates that \gls{psola} doesn't produce a significant amount of artifacts that would make it difficult to rate the quality of the system only based on musical intonation instead of audio quality.
+For both algorithms, the pitch shifts applied to the audio were computed using \gls{psola}. The only difference between the outputs is the amount of shift. In a subjective test conducted in previous work, \cite{wager2020deep}, I asked listeners who compared the original audio to the corrected audio which version sounded more natural. Listeners did not hear a difference between samples, which indicates that \gls{psola} doesn't produce a significant amount of artifacts that would make it difficult to rate the quality of the algorithm only based on musical intonation instead of audio quality.
 
 Listeners were amateur or professional-level musicians. Each listener was assigned four samples: two pairs comparing the baseline outputs to the original, and two comparing the corrected outputs to the original using the ``Silence-\gls{hmm}'' model. The listeners did not know which algorithms were used in each pair. They were asked to indicate which performance they considered more accurate in terms of pitch, and could optionally leave comments. Tables \ref{tab:baseline-scores} and \ref{tab:original-scores} shows the results and anonymized comments for the baseline and corrected samples, respectively. N participants provided a total M responses. 
 
@@ -110,25 +109,25 @@ Listeners were amateur or professional-level musicians. Each listener was assign
     \hline
 \textbf{Sample name} & \textbf{Score} & \textbf{Comments} \\
 \hline\hline
-Ariel 1 & 0-2 & "Not easy to hear the difference"; "Difficult. Notes at 6 and 16 seconds are out of tune in both samples. Note between 9 and 11 might be better in original. Original is better, neither is great."\\
+Ariel 1 & 0-2 & ``Not easy to hear the difference. Both are mostly in tune''; ``Difficult. Notes at 6 and 16 seconds are out of tune in both samples. The note between 9 and 11 might be better in the original. The original is better, neither is great.''\\
 \hline
-Ariel 2 & 0-2 & "Both mostly in tune"; "Very close, both pretty much in tune"\\ 
+Ariel 2 & 0-3 & ``Both mostly in tune''; ``Very close, both pretty much in tune''\\ 
 \hline
-Annar 4 & 1-0 & "Baseline is so out of tune that it is difficult to figure out what the melody is, but one can perhaps can make more sense of Original."\\ 
+Annar 4 & 2-0 & N/A\\ 
 \hline
-Amy 7 & 1-0 & - "Baseline gets a mild preference. The original gets an overall score of 9/10"\\
+Amy 7 & 1-1 & - ``Baseline gets a mild preference. The original gets an overall score of 9/10''\\
 \hline
-Davidson 4 & 0-0 & N/A\\ 
+Davidson 4 & 0-1 & N/A\\ 
 \hline
-Bobon 4 & 0-2 & "Both are pretty bad, but original might be somewhat more in tune" \\ 
+Bobon 4 & 0-2 & ``Both are pretty bad, but the original might be somewhat more in tune''. ``Baseline is so out of tune that it is difficult to figure out what the melody is, but one can perhaps make more sense of the corrected version'' \\ 
 \hline
-Geniusturtle 7 & 1-0 & N/A\\ 
+Geniusturtle 7 & 2-0 & N/A\\ 
 \hline
-Stool 4 & 0-1 & "Strong preference for original, the baseline gets score 7/10"\\ 
+Stool 4 & 0-2 & ``Strong preference for original. The baseline gets score 7/10''\\ 
 \hline
-Fdps 4 & 0-0 & "both moderately out of tune - one's ear's might be getting a bit tired at this point"; "original sounded clearly more in tune, starting from a pretty weak base in baseline\\ 
+Fdps 4 & 0-2 & N/A\\ 
 \hline
-Jmzen 1 & 1-1 & "both are moderately out of tune, also the singer might not always hit the right note; now one's ears might be too tired"; "Very close, original is better e.g., on second 7" \\ 
+Jmzen 1 & 1-1 & ``Both are moderately out of tune, also the singer might not always hit the right note; now one's ears might be too tired''; ``Very close, the original is better (e.g., on second 7).'' \\ 
 \hline
     \end{tabularx}
     \caption{Baseline versus original. Some listeners provided comments. These are summarized in this table, and randomized label names are replaced with the actual labels, unknown to the listeners.}
@@ -143,25 +142,25 @@ Jmzen 1 & 1-1 & "both are moderately out of tune, also the singer might not alwa
     \hline
 \textbf{Sample name} & \textbf{Score} & \textbf{Comments} \\
 \hline\hline
-Ariel 1 & 0-1 & N/A \\
+Ariel 1 & 0-2 & N/A \\
 \hline
-Ariel 2 & 0-0 & N/A \\ 
+Ariel 2 & 0.5-0.5 & ``No preference'' \\ 
 \hline
-Annar 4 & 0-0 & N/A \\ 
+Annar 4 & 0-1 & N/A \\ 
 \hline
-Amy 7 & 0-0 & N/A \\
+Amy 7 & 1-0 & N/A \\
 \hline
-Davidson 4 & 3-0 & "Both are very accurate, very difficult to tell the difference"; "Both are pretty much in tune, a note at second 5 might be better in corrected"; "Strong preference for corrected, worse signal gets overall score 9/10"\\ 
+Davidson 4 & 3-0 & ``Both are very accurate, very difficult to tell the difference''; ``Both are pretty much in tune, a note at second 5 might be better in the corrected version''; ``Strong preference for corrected version, the original gets overall score 9/10''\\ 
 \hline
-Bobon 4 & 1-0 & N/A \\ 
+Bobon 4 & 1-1 & N/A \\ 
 \hline
-Geniusturtle 7 & 3-0 & "Corrected is clearly better"; "Corrected sounded clearly more in tune"; "Corrected is slightly better, original gets score 6/10"\\ 
+Geniusturtle 7 & 3-0 & ``Corrected is clearly better''; ``Corrected sounded clearly more in tune''; ``Corrected is slightly better, original gets score 6/10''\\ 
 \hline
-Stool 4 & 2-0 & "Corrected is clearly better"; "Notes at seconds 4 and 9 are better in corrected" \\ 
+Stool 4 & 3-0 & ``Corrected is clearly better''; ``Notes at seconds 4 and 9 are better in corrected'' \\ 
 \hline
-Fdps 4 & 1-1 & "Original sounded clearly more in tune, starting from a pretty weak base in corrected version" "Both moderately out of tune - one's ear's might be getting a bit tired at this point" \\ 
+Fdps 4 & 1-1 & ``Original sounded clearly more in tune, starting from a pretty weak base in corrected version'' ``Both are moderately out of tune - one's ear's might be getting a bit tired at this point'' \\ 
 \hline
-Jmzen 1 & 0-0 & N/A \\ 
+Jmzen 1 & 0-2 & N/A \\ 
 \hline
     \end{tabularx}
     \caption{Corrected versus original. Some listeners provided comments. These are summarized in this table, and randomized label names are replaced with the actual labels, unknown to the listeners.}
