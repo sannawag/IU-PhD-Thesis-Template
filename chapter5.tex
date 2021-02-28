@@ -30,7 +30,7 @@ This chapter provides an example of a semi-automatic process for the task of sea
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{figures/full_histograms_comparison.eps}
+    \includegraphics[width=12cm]{figures/full_histograms_comparison.eps}
     \caption{Global histograms of singing pitch deviations from the expected \gls{midi} pitch in cents summed over 4702 performances in the ``Intonation'' dataset and 4702 in the remaining clusters. The plot is truncated at the top for readability. Scaled log histograms make more noticeable the small peaks at 1200 cents in both directions, due to octave deviations, common among singers. There is also, interestingly, a larger number of deviations between 100 and 300 cents in the negative direction than in the positive direction.}
     \label{fig:full_hist}
 \end{figure}
@@ -41,7 +41,7 @@ Automatic analysis of musical intonation behavior has also been performed in oth
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{figures/full_pos_vs_neg_line.eps}
+    \includegraphics[width=12cm]{figures/full_pos_vs_neg_line.eps}
     \caption{Comparison of positive and negative deviation counts for cents ranging from 1 to 100 (omitting 0) for both datasets. In both groups, negative deviations are more common than positive ones. The ``Intonation'' dataset deviations are more concentrated around zero. }
     \label{fig:pos_neg}
 \end{figure}
@@ -121,7 +121,7 @@ Cents range & Negative/positive deviation ratio & Var \\
 
 %Dataset description and applications
 \section{Dataset description and applications}
-The ``Intonation'' dataset contains the full unmixed and unprocessed vocal tracks of 4702 performances. It consists of 474 unique arrangements by 3556 singers. It also contains the \gls{pyin} pitch analysis and multiple backing track features for the range of 30 to 90 seconds: constant-Q transform, chroma, mel-frequency cepstrum coefficients, root mean square error, and onset, all computed using the Librosa \cite{mcfee2015librosa} package. Metadata of the performances is included. The dataset has applications ranging from the study of singing style in the context of karaoke performances, with optional study of user meta-data, to machine learning. For example, the vocal tracks can be used for informed source separation, an approach similar to separation by humming, described in \cite{smaragdis2009separation} and \cite{liutkus2012informed}. Similarly, the dataset can be used for training a query-by-humming system, in a similar way to \cite{huq2010crowdsourcing}. The vocal pitch tracks and backing track features can be used to study automatic pitch correction applications trained on real-world singing and develop a proof-of-concept model for vocal pitch correction \cite{wager2018pitch}.
+The ``Intonation'' dataset contains the full unmixed and unprocessed vocal tracks of 4702 performances. It consists of 474 unique arrangements by 3556 singers. It also contains the \gls{pyin} pitch analysis and multiple backing track features for the range of 30 to 90 seconds: constant-Q transform, chroma, mel-frequency cepstrum coefficients, root mean square error, and onset, all computed using the Librosa \cite{mcfee2015librosa} package. Metadata of the performances is included. The dataset has applications ranging from the study of singing style in the context of karaoke performances, with optional study of user meta-data, to machine learning. For example, the vocal tracks can be used for informed source separation, an approach similar to separation by humming, described in \cite{smaragdis2009separation} and \cite{liutkus2012informed}. Similarly, the dataset can be used for training a query-by-humming system, in a similar way to \cite{huq2010crowdsourcing}. The vocal pitch tracks and backing track features can be used to study automatic pitch correction applications trained on real-world singing and develop a proof-of-concept model for vocal pitch correction \cite{wager2020deep}.
 
 %Conclusion
 \section{Summary}

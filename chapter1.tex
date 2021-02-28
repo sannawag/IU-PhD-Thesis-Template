@@ -1,154 +1,68 @@
 \chapter{Introduction}
 \label{chap:thesis-intro}
-%\section{Post-processing of user-generated audio: An overview}
-%\label{sec:challenges-intro}
-%1. Introduction to the introduction. 
-%    1. Deep autotuner
-%        1. Automatic pitch correction algorithm (define)
-%        2. DNN
-%        3. data-driven (define)
-%        4. relationship between spectrograms/time-frequency transformations (define)
-%        5. trained on real-world singing
-%        6. can be adapted to musical genres w/o equal-tempered
-%        7. no musical score: harmonize improvise
-%        8. respect nuanced variations of sung pitch 
-%        9. estimates amount of unintended pitch shift
-Digital music builds on a rich music tradition in the acoustic realm, but also differs from it by nature. Before digital music can reach our ears, it needs to be represented as data that a computer can process. Design and engineering decisions lie behind this representation, from the sound wave itself---stored as a sequence of numbers---to musical structure, including melody, harmony, and rhythm. This thesis focuses on the question of representation of musical pitch in the digital realm, in the context of a pitch correction algorithm for singing voice. The way musical pitch is represented will affect how the notes are adjusted, and by extension the listener's musical experience. This thesis covers studies of how physical measures of pitch, such as frequency and timbre, map to what we hear through a complex psychoacoustic process influenced by our musical upbringing, and determine whether we consider a note to be ``in tune'' or not. It introduces a pitch correction algorithm design that strives to relate digital representation to the complex and rich way we experience pitch.
 
-Music making with family, friends, and the wider community is one of the universally enjoyed activities across the world. In recent years, digital options have emerged in applications such as Smule, Spotify, Cadenza, YouTube, and TikTok. These enable people to share their recordings with their peers in other locations, and provide tools for collaboration and audio processing that are only possible in the digital realm. One category of tools is post-processing, which involves editing the track after it has been recorded to make it the best possible quality. Automatic pitch correction to make a performance sound in tune falls into this category. 
+Digital music builds on a rich music tradition in the acoustic realm, but also differs from it by nature: Instead of directly reaching our ears, digital music first needs to be represented as data that a computer can process. Our listening experience depends on the quality of the representation. Design and engineering decisions lie behind the representation, from the sound wave itself---stored as a sequence of numbers---to musical structure, including melody, harmony, and rhythm. In this thesis, I introduce an automatic pitch correction algorithm for singing voice. The pitch representation in the algorithm is designed to capture the complex way we experience pitch and manipulate it when singing. This thesis work builds on studies of how physical measures of pitch, such as frequency and timbre, map to what we hear through a complex psychoacoustic process influenced by our musical upbringing. This complex process results in us either considering a note to be ``in tune'' or not.
 
-Why not just leave the recording unaltered? As anyone who has tried to photograph a beautiful landscape might relate to, capturing the natural colors, beauty, and atmosphere of the scene is very challenging. Image post-processing might actually make the outcome more realistic or, alternatively, focus the viewer on aspects of the landscape that would not have stood out when present in person. In the same way, a performance heard live versus recorded can be a substantially different artistic experience, where the listener is hearing the performance through the recording and playback pipeline, outside the original acoustic setting. Post-processing of audio can enhance the listening experience. 
+Music making with family, friends, and the wider community is one of the universally enjoyed activities across the world. In recent years, digital options have emerged in applications such as Smule, Spotify, Cadenza, YouTube, and TikTok. These enable people to share their recordings with their peers, and provide tools for collaboration and audio processing that only exist in the digital realm. One category of tools is post-processing, which involves editing the track after it has been recorded to improve the quality. Automatic pitch correction to make a performance sound in tune is one type of post-processing. 
 
-The process of producing a digital recording can range from professional to recreational. The professional kind involves the use of professional audio-editing software, high-end microphones, and recording spaces with good acoustics, all of which require considerable time and resources. It results in a polished and high-quality result. The recreational kind often involves multipurpose recording devices such as smartphones, and typically involves less time and resources. Music apps can serve as a platform for recreational music making. Apps can provide a meaningful musical opportunity. During my internship with Smule, Inc, a singing app, I heard about users who would take a ten-minute break in their workday to sing, then would write to the company sharing how that short singing break brought them joy and reduced their stress. Recreational musicians may not wish to spend much time editing their recording, or have the resources or training to do so, but still wish to use post-processing tools built into the app that apply automatic pitch correction or other effects such as reverb. These post-processing tools do not replace professional audio editing, but are recognized as improving the quality of the recording with remarkably little effort or cost. Although post-processing tools fall short of bringing a recording up to a professional level, they may well make it more pleasing to a listener. A parallel can be seen when a person uses a spell-checker to improve the quality of their writing, even when writing simple text such as an email. The ability of the spell-checker to remove minor errors produces a more polished result, which can make a big difference, especially given the high stakes of sharing content in a recorded format.
+Why not just leave the recording unaltered? As anyone who has tried to photograph a beautiful landscape has experienced, capturing the natural colors, beauty, and atmosphere of a scene is challenging. Image post-processing might actually make the outcome better capture reality or, alternatively, bring to the viewer's attention aspects of the landscape that could otherwise be easily missed. In the same way, post-processing of audio can enhance the listening experience: The listener is hearing the performance through the recording and playback pipeline, outside of the original acoustic setting. A performance heard recorded versus live can be a substantially different artistic experience.
 
-Digital apps may be the primary way that many people interact actively with music, or the first approach people try when getting started with music. The quality of the experience and its potential to lead to musical growth may determine whether a user keeps making music or gives it up.
+The process of producing a digital recording can range from professional to recreational. Professional digital recording involves the use of professional audio-editing software, high-end microphones, and recording spaces with good acoustics, all of which require considerable time and resources. It results in a polished and high-quality result. The recreational kind often involves multipurpose recording devices such as smartphones, and typically involves little in the way of time and resources. Music apps can serve as a platform for recreational music making. Apps can provide a meaningful musical opportunity. Users of Smule, Inc, a singing app, have reported taking a ten-minute break in their workday to sing, and shared with the company how that short singing break brought them joy and reduced their stress. Without being willing to invest time and money in editing their recording or having the resources or training to do so, recreational musicians may still benefit from using post-processing tools that are built into the app. These apply automatic pitch correction or add effects such as reverb. Post-processing tools do not replace professional audio editing, but are recognized as improving the quality of the recording with remarkably little effort or cost. Although post-processing tools do not make a recording sound professional, they can make it more pleasing to a listener. A parallel can be seen when a person uses a grammar-checker to improve the quality of their writing, even when writing simple text such as an email. The ability of the grammar-checker to remove minor errors produces a more polished result, which can make a big difference, especially given the high stakes of sharing content in a recorded format.
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=\columnwidth]{images/program_flow_chart.png}
+    \caption{Pitch correction algorithm overview. The algorithm requires audio for the vocals and backing track on separate audio tracks. It applies the constant-Q transform to the audio to generate time-frequency representations. It then splits the data into individual notes based on the measured singing frequency. It discards silent sections in the audio. Next, for every note, it predicts a pitch correction shift using a deep neural network (DNN) trained on real-world singing examples. Finally, in the post processing phase, it applies the shifts to every note and combines them along with silent sections to construct the corrected track. }
+    \label{fig:results}
+\end{figure}
+
+\section{Challenges in data-driven automatic pitch correction}
+
+I illustrate the complexity of the task of automatic pitch correction by describing the difference between a musical score and a performance. In a musical score, a melody for singing voice is typically notated as a sequence of notes of discretized lengths and pre-defined pitches. The simplicity of the symbolic representation leaves considerable scope for variation in the singer's interpretation. Even when a vocalist follows the general contour of the score, the singing voice actually varies continuously due to expressive gestures such as pitch bending, vibrato, and other variations coming from musical tradition, personal preference, and random variation. A singer's deviation from the symbolic score is sometimes large, as described in Chapter \ref{chap:intonation}.
+
+In existing commercial systems for automatic pitch correction, vocal track notes are typically shifted to be centered around pitches in a user-defined score, or mapped to the closest pitch among the twelve equal-tempered scale degrees (e.g., \cite{antares:2018}). This approach reliably corrects out-of-tune singing. The downside is that it also removes intentional nuances whenever pitch deviates from the symbolic score. 
+
+The algorithm in this thesis represents pitch as a continuous parameter instead of a discretized value. This continuous representation enables it to preserve the nuanced variations of sung pitch while applying corrections. Furthermore, the algorithm makes its predictions purely on the audio content of the vocals and backing track (also called accompaniment), without relying on a musical score. This leaves room for the singer to sing a different melody, as is common when harmonizing or improvising. %, while also correcting the amount of unintended pitch shift. %It predicts corrections for these unintended deviations.%The priority is to output a result that sounds natural and aesthetically pleasing. If this is not the case, the user will prefer the unprocessed recording. 
+
+Making a singer's pitch track sound more in tune without relying on a symbolic score is not straightforward. The algorithm must behave like a human listener with a moderate level of musical understanding. Such a listener can often detect the out-of-tune notes and predict the amount and direction of the pitch shift required to bring the note back in tune, all without requiring access to the score. The algorithm in this thesis uses a Deep Neural Network (\gls{dnn}) to make predictions. The \gls{dnn} is trained on real-world singing examples, from which it learns patterns of intonation that help it make accurate predictions.
+
+Training data for automatic pitch correction is hard to find. The first challenge involves collecting examples of in-tune singing. Publicly available datasets typically mix performances of all levels of singing, in tune and out of tune. The second challenge---if training the \gls{dnn} in a supervised manner---is to design data pairs where the input is out of tune, the target is in tune, but the signals are otherwise identical. Such pairs don't occur naturally, making data synthesis a viable approach. Synthesizing out-of-tune singing from an in-tune performance, however, requires defining a de-tuning algorithm, which is a challenge in itself. Chapters \ref{chap:intonation} and \ref{chap:tech-background} illustrate the difficulty of representing pitch as a set of features that can be measured and manipulated. Chapter \ref{chap:thesis-autotuner} delves into the numerous decisions around feature design. 
 
 \section{Overview}
-This thesis addresses the task of developing a data-driven algorithm for automatic pitch correction. Existing commercial systems usually discretize the pitch to a small number of values \cite{antares:2018}. Vocal track notes are usually shifted to be centered around pitches in a user-defined score, or mapped to the closest pitch among the twelve equal-tempered scale degrees. The resulting model of pitch does not reflect the smooth variation of pitch in continuously controlled instruments such as voice or violin, and can produce a robotic-sounding result. The proposed pitch correction algorithm uses a deep neural network trained to predict pitch shifts based on audio patterns in real-world singing examples. Through these examples, the \gls{dnn} is exposed to both incorrect intonation, for which it learns a correction, and intentional pitch variation, which it learns to preserve. It treats pitch as a continuous value rather than a discrete set of notes and does not rely on a musical score, thus allowing for improvisation and harmonization in the singing performance. The fact that it is not bound to a discrete set of notes also means that it can be adapted to many different musical cultures, regardless of the scales used in these cultures. 
+The algorithm introduced in this thesis predicts pitch corrections of solo singing performances in a data-driven manner. It predicts note-wise pitch shifts from the relationship between the respective spectrograms of the singing and backing track. It outputs the amount and direction of the pitch shift expected to bring the note back in tune. The pitch shift predictions are constant by note, and continuous in frequency. In post-processing, the algorithm applies the shifts to each note, as shown in Figure \ref{fig:results}. It does not require access to the musical score, which makes it usable even when the singer improvises or harmonizes in a performance.
 
-%\section{Background}
-%2. Personal background: overarching topic
-%    1. Technology and music have traditionally built on each other. 
-%    - Undergraduate acoustic intrument, rich sounds, 
-%    - Inspired by renaissance choir music
-%    - Pythagoras, ratio theory, harmony of the spheres inspired me in intonation endeavors, 
-%    - Stories of choirs shifting global pitch down over time to sound in tune
-%    - Magic of a violin solo in Thais Massenet that hit just the right pitches
-%    - jazz, always one note off. Classical music: anxious of making a mistake that would ruin the magic. Brick in a giant building of sound, didn’t want to be the one that made it tumble over
-%    - Soundgarden and imperfection
-%    - Magic of pitch bending in bollywood music
-%    - I also found intonation very difficult: my bassoon professor McLean described how a bad timbre can make a note sound out of tune even though the tuner measures the correct frequency
-%    - Bassoonist Diego Chenna had a story of a wind player who was out of tune with the rest of the orchestra, but pointed at his tuner and said he was right because the light was green
-%    - Personally struggled with intonation, ear infection that shifted my perfect pitch, still confused sometimes.
-%    - No easy way of reconciling all these ideas, but they all brought richness
-%    - Got into music informatics, a few years later this is the overarching theme of the thesis
-%    - Also enjoyed pop music, digital effects, fascinating timbres
-%    - love-hate relationship with auto-tune, sometimes wonderful, sometimes left me feeling empty
-%    - Not many other systems
-%    - Would not have expected that auto-tuning would end up being my thesis topic
+The algorithm is designed to utilize information similarly to the human ear, basing corrections on information found in the audio, such as the level of perceived musical harmony and context in time. It is a \gls{dnn} trained on patterns in real-world singing examples from a dataset of 4,702 amateur karaoke performances selected for good intonation \cite{wager2018intonation}. The model is trained on both incorrect intonation, for which it learns a correction, and intentional pitch variation, which it learns to preserve. The design of the algorithm is based on the empirically derived conceptualization of musical intonation described in Section \ref{sec:empirical}. Given its flexibility and preservation of nuance, it is adaptable to different musical traditions, regardless of the scales and pitch-related practices used in these traditions. It is a step towards a model-free automatic pitch correction system, the use of which is justified in Chapter \ref{chap:tech-background}. 
 
-\section{Contribution}
-%Deep autotuner is 
-%    1. Auto-Tune vs autotune
-%    6. Tools for amateur musicians to develop their singing within a musical culture, refine ear
-%    7. 
-%    8. Can a DNN learn intonation patterns from a time-frequency transformation and use those to predict %pitch corrections
-%    9. Can the DNN preserve intended pitch variation while detecting unwanted?
-%    10. Can the DNN make predictions without a musical score?
-%    11. Automatic pitch correction system 
-%    12. DNN
-%    13. data-driven
-%    14. relationship between spectrograms
-%    15. trained on real-world singing
-%    16. can be adapted to musical genres w/o equal-tempered
-%    17. no musical score: harmonize improvise
-%    18. respect nuanced variations of sung pitch 
-%    19. estimates amount of unintended pitch shift
-%    20. post-processing
-%    21. Contribution
-%        1. prototype model for the task
-%        2. Spectrogram-based sequential pitch correction predictions
-%        3. DNN model
-%        4. Present a data collection technique for subjective task
-%            1. Can be used for other collection
-%        5. Explore how this system could be turned into a usable system in practical situations
+The proposed \gls{dnn} architecture includes convolutional layers for feature extraction followed by Gated Recurrent Units (\gls{gru}s) for sequential processing. The algorithm shows promising performance on the real-world score-free singing pitch correction task. To the best of my knowledge, this is the first data-driven approach to correcting singing voice pitch based on its harmonic alignment to the backing track.
 
-The work in this thesis contributes to the recent field of music information retrieval, which lies in the intersection of music and technology. The automatic pitch correction algorithm proposed in this thesis is developed in the context of the following questions: How can recent technological advances be used in the service of music and art in general? How does this algorithm fit into the context of millenia of music theory? How can we incorporate music theory into music technology, and how can technology provide new means for artistic expression and development? How does a data-driven approach relate to existing systems such as Antares Auto-Tune? 
+\section{Scope and limitations}
+The algorithm---designed for amateur singing---is intended for situations where a singer wishes to apply simple post-processing---for example, on their smartphone---without using professional audio-editing software. It requires that the vocals and backing track be separate, and for the vocals to be monophonic and free of noise. The current algorithm is limited to post-processing: Adapting it for real-time processing is left to future work.
 
-As far as I know, the automatic pitch correction algorithm proposed in this thesis is the first one that incorporates concepts from psychoacoustics, physics of sound, and cultural practices regarding musical intonation into its design. Its contributions include:
+The assumptions on which the algorithm is based are strong and might not be accurate. First, the backing track is assumed to have clearly identifiable pitches---a chord progression---that serves as a reference for the vocals. Second, a singer is assumed to target a specific frequency per note, around which all pitch variations are centered. Third, the dataset used to train the algorithm is assumed to be in-tune enough for this prototype, despite consisting of amateur singing. %tune
+
+
+\section{Contributions}
+Contributions in this thesis include:
 \begin{itemize}
-    \item Predictions of pitch corrections based on the time-frequency content of the vocals and backing tracks i.e., the alignment of the harmonics
-    \item Use of the backing track chord progression to predict pitch shifts that make the vocals sound in tune
-    \item A data-driven approach that is designed to preserve intended pitch variation while detecting unwanted deviations
-    \item An adaptation of the deep neural network architecture including convolutional layers for feature extraction and recurrent layers for sequential processing to the task of automatic pitch correction
-    \item Adaptability to any musical culture, as long as training data is available
-    \item No need for a musical score
-    \item An note boundary detection algorithm
-    \item A first step towards a data-driven approach to automatic pitch corection. Existing approaches tend to be model-driven.
-    \item The ``Intonation'' dataset of in-tune singing performances, including the time-frequency magnitude transformation of the backing tracks and other metadata
-    \item A commentary on how this algorithm could be turned into a usable system in practical situations, despite the fact that it will make mistakes
+    \item A data-driven algorithm for predicting pitch corrections directly based on the time-frequency content of the vocals and backing tracks instead of based on a symbolic music score.
+    \item Continuous representation of pitch, enabling the algorithm to preserve pitch nuances, thus incorporating concepts from psychoacoustics, physics of sound, and cultural practices regarding musical intonation.
+    \item A technique for generating pairs of training examples where one is in tune and the other is out of tune. This involves de-tuning in-tune performances to synthesize out-of-tune singing. De-tuning is based on random sampling from a Hidden Markov Model \cite{rabiner1989tutorial}.
+    \item Adaptability to any musical culture for which training data is available.
+    \item An adaptation of the \gls{dnn} architecture including convolutional and Gated Recurrent Unit \cite{chung2014empirical} layers to the task of automatic pitch correction. The convolutional layers are used to extract features, while the gated recurrent unit layers process the music signal sequentially.
+    \item The ``Intonation'' dataset of in-tune singing performances, including the time-frequency magnitude transformation of the backing tracks and other metadata.
+    \item A commentary on transforming this algorithm into a system that is usable in practice, even given the fact that not all of its corrections will result in improvements.
+    \item A small-scale subjective listening test, where the deep pitch correction network is shown to provide convincing adjustments when the backing track includes clear reference pitches.
 \end{itemize}
 
-\section{Challenges in generating a natural sounding result}
-
-Automatic singing pitch correction is a commonly desired application for digital recordings of singing. However, making a singer's pitch track sound more in tune is not always straightforward. A human listener with a moderate level of musical understanding can often detect the out-of-tune notes and predict the amount and direction of the pitch shift required to bring the note back in tune, all without requiring access to the musical score. However, commercially available pitch correction software depends on a synchronized score for the target pitch \cite{antares:2018}. The lack of knowledge about the target pitch of the sung melody can make a potential automated system suffer in the pitch correction task.
-
-The priority with both is to output a result that sounds natural and aesthetically pleasing. If this is not the case, the user will prefer the unprocessed recording. 
-
-Realistic data is hard to generate. The first challenge is collecting examples of in-tune singing: Publicly available datasets of singing performances typically mix performances of all levels of singing. The second challenge---if using supervised training---is to design data pairs where, for example, each pair is identical except for the vocals pitch. Such pairs are difficult to come across naturally, making realistic data synthesis a viable approach.
-
-\section{Scope}
-%4. Scope of the topic
-%    1. Post-procesing
-%    2. amateur singing
-%    3. smartphone app
-The proposed algorithm is designed for amateur singing and focuses on situations where a singer wishes to apply simple post-processing---for example, on their smartphone---without using professional audio editing software. It requires for the vocals and backing track to be separate, and for the vocals to be monophonic and free of noise. The algorithm is designed to be used as a post-processing tool. It may be adapted for real-time processing, but the task is out of the scope of this thesis.
-
-The algorithm is built on some strong assumptions, which might not be accurate. First, that the backing track has clearly identifiable pitches---a chord progression---which serves as a reference for the vocals. Second, that a singer targets a specific frequency per note, around which all pitch variations are centered. Third, that the dataset used to train it is in-tune enough for this prototype, despite consisting of amateur singing. %tune
-%5. Outline your epistemological and ontological position
-%    1. In this thesis, compare a model-driven approach to the selected data-driven approach, describe how %each contributes to increased knowledge, and why I chose a data-driven approach
-%    2. Address issues that can come up when a data-driven approach outputs an error
-%6. State the hypotheses (if you are using any)
-%    1. backing track has clearly identifiable pitches---a chord progression---which serves as a reference %for the vocals
-%    2. a singer targets a specific frequency per note, around which all pitch variations are centered: can %shift frequency by note
-%    3. Assumption that the dataset we collect is in-tune enough for this prototype, despite not being in %tune
-%    4. Built within context of mostly Western music, but show that it can be customized to many musical cultures
-\section{Main findings}
-The deep pitch correction network described in this thesis is trained in a supervised manner on pairs of performances where one is in tune and the other is out of tune. Generating these pairs requires de-tuning the in-tune performances to synthesize out-of-tune singing. The deep neural network predicts a constant pitch shift per note. This thesis includes a comparison of different approaches to splitting a singing performance into notes, different random distributions for de-tuning performances, and different neural network architectures. A histogram-based comparison of the pitch distributions output by each configuration indicates that the most accurate one parses notes based on silence, uses a Hidden Markov Model \cite{rabiner1989tutorial} to generate pitch deviations, and uses a neural network architecture consisting of convolutional layers followed by a single Gated Recurrent Unit \cite{chung2014empirical}. In a small-scale subjective listening test, the deep pitch correction network provides convincing adjustments when the backing track includes clear reference pitches.
-
 \section{Outline}
-The layout of the thesis is as follows.
-%9. Discuss the layout of the thesis
-%    1. 2: musical intonaton: ratio-based, empirically derived, auto-tune, conceptualization in this thesis
-%    2. 3: model free: music representation in software, model-driven vs model-free approaches, concepts of %control, interpretability, and expressivity, reason behind DNN
-%    3. 4: technical presentation: related work in MIR, DL, ASP, proposed algorithm, and experimental %configuration
-%    4. 5: dataset generation, Smule 
-%    5. 6: results
-%    6. 7: conclusion and future work
+\textbf{Chapter \ref{chap:intonation}} provides a musical background for the algorithm design, placing its development in the context of the discussion of musical intonation that has occurred over millenia. It then introduces two standard conceptualizations of musical intonation, relevant definitions, and musical cultures that use intonation in different ways. This chapter also introduces Antares Auto-Tune, one of the music-industry standards for pitch correction, discussing its advantages and disadvantages, and what can be learned from it when developing a data-driven pitch-correction algorithm. 
 
-\subsection{Chapter \ref{chap:intonation}}
-Chapter \ref{chap:intonation} provides a musical background for the design of the proposed algorithm. It places it in the discussion on musical intonation over millenia. It then introduces two standard conceptualizations of musical intonation, relevant definitions, and musical cultures that use intonation in different ways. This chapter also introduces Antares Auto-Tune, one of the music industry standards for pitch correction, discussing its advantages and disadvantages, and what can be learned from it when developing the proposed algorithm.
+\textbf{Chapter \ref{chap:tech-background}} discusses the technical background. It provides an overview of music representation in software and compares model-driven approaches to data-driven approaches, including how they affect control, interpretability, and expressivity of the programs. It concludes with reasons behind the choice of a deep neural network for the task of automatic pitch correction.
 
-\subsection{Chapter \ref{chap:tech-background}}
-%    2. 3: model free: music representation in software, model-driven vs model-free approaches, concepts of %control, interpretability, and expressivity, reason behind DNN
-Chapter \ref{chap:tech-background} discusses the technical background. It provides an overview of music representation in software and compares model-driven approaches to music technology data-driven approaches, including how they affect control, interpretability, and expressivity of the programs. It concludes with reasons behind the choice of a deep neural network for the task of automatic pitch correction.
+\textbf{Chapter \ref{chap:thesis-autotuner}} provides a technical presentation of the proposed algorithm. It starts with an overview of related work in music information retrieval, deep learning, and audio signal processing. It then describes in detail the proposed algorithm. This includes note boundary detection techniques, pitch de-tuning techniques, model architecture choices, and the experimental configuration.
 
-\subsection{Chapter \ref{chap:thesis-autotuner}}
-Chapter \ref{chap:thesis-autotuner} provides a technical presentation of the proposed algorithm. It starts with an overview of related work in music information retrieval, deep learning, and audio signal processing. It then describes in detail the proposed algorithm. This includes note boundary detection techniques, pitch de-tuning techniques, model architecture choices, and the experimental configuration.
-%    3. 4: technical presentation: related work in MIR, DL, ASP, proposed algorithm, and experimental %configuration
+\textbf{Chapter \ref{chap:thesis-damp}} describes how the ``Intonation'' dataset was collected, details about the dataset, and how the collection technique can be used to generate datasets for other tasks where the target is subjective---as it is in the case of musical intonation. It also describes shortcomings related to genre bias in the current dataset, and how this issue can be fixed in future work.
 
-\subsection{Chapter \ref{chap:thesis-damp}}
-Chapter \ref{chap:thesis-damp} describes how the ``Intonation'' dataset was collected, details about the dataset, and how the collection technique can be used to generate datasets for other tasks where the target is subjective---as it is in the case of musical intonation. It also describes shortcomings related to genre bias in the current dataset, and how this issue can be fixed in future work.
+\textbf{Chapter \ref{chap:results}} describes results both on the synthesized test set and the real-world dataset. It includes a comparison of the results using pitch deviation histograms. It also includes a comparison of the pitch deviation histograms of the selected model with the ground truth ``Intonation'' dataset, a professional dataset, the real-world test dataset before corrections, and the synthetically de-tuned data. This analysis is followed by a qualitative listening test that provides insights into the way the model works. The analysis indicates that the proposed approach is more reliable than a conceptually and computationally simple baseline. It also indicates that the proposed approach effectively utilizes pitch content from the backing track when this is close to the melody.
 
-\subsection{Chapter \ref{chap:results}}
-Chapter \ref{chap:results} describes results both on the synthesized test set and the real-world dataset. It includes a comparison of the results using pitch deviation histograms. It also includes a comparison of the pitch deviation histograms of the selected model with the ground truth ``Intonation'' dataset, a professional dataset, the real-world test dataset before corrections, and the synthetically de-tuned data. This analysis is followed by a qualitative listening test that provides insights into the way the model works. The analysis indicates that the proposed approach is more reliable than a conceptually and computationally simple baseline. It also indicates that the proposed approach effectively utilizes pitch content from the backing track when this is close to the melody.
-
-\subsection{Chapter \ref{chap:conclusion}}
-Chapter \ref{chap:conclusion} concludes the thesis, providing a summary of the takeaways from this thesis. It presents the proposed automatic pitch correction as a prototype, describes its current limitations, and how these might be addressed in future work.
-
-
-%    4. 5: dataset generation, Smule 
-%    5. 6: results
-%    6. 7: conclusion and future work
-
-
+\textbf{Chapter \ref{chap:conclusion}} concludes the thesis. It presents the proposed automatic pitch correction as a prototype, describes its current limitations, and how these might be addressed in future work.
