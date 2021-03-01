@@ -15,11 +15,11 @@
 
 %Insert your abstract here
 
-In this thesis, I introduce a data-driven algorithm for estimating and applying pitch corrections to a vocal performance recording. Existing pitch correction systems usually map the vocals pitch to a discrete set of values. The proposed algorithm instead treats pitch as a continuous parameter. Continuous pitch representation enables the algorithm to apply to a wide variety of musical traditions, regardless of the scales and pitch variation patterns used in these traditions. 
+In this thesis, I introduce a data-driven algorithm for estimating and applying pitch corrections to a vocal performance recording. Existing pitch correction systems usually map the vocals pitch to a discrete set of values, such as the notes in the equal-tempered scale. The proposed algorithm instead treats pitch as a continuous parameter. Continuous pitch representation enables the algorithm to apply to a wide variety of musical traditions, regardless of the scales and pitch variation patterns used in these traditions. 
 
-The algorithm uses both the vocals and backing track as references for its pitch correction predictions. It is built around a deep neural network model, which includes convolutional layers for detecting patterns in the audio signal, and recurrent layers for processing the song sequentially. The model is trained on karaoke performances selected for accuracy. It is exposed both to incorrect intonation, for which it learns a correction, and intentional pitch variation, which it learns to preserve. 
+The algorithm uses both the vocal and backing tracks as references for its pitch correction predictions. It is built around a deep neural network model, which includes convolutional layers for detecting patterns in the audio signals, and recurrent layers for processing the song sequentially. The model is trained on karaoke performances selected for accuracy. It is exposed both to incorrect intonation, for which it learns a correction, and intentional pitch variation, which it learns to preserve. 
 
-This thesis includes arguments in favor of a data-driven approach to digital music processing over a model-based approach, prioritizing expressivity over control and interpretability. In an analysis of the results, the proposed algorithm shows promising performance on real-world singing. 
+This thesis includes arguments for favoring a data-driven approach to digital music processing over a model-based approach, prioritizing expressivity over control and interpretability. In an analysis of its outputs, the proposed algorithm shows promising performance on real-world singing. 
 
 \ifdefined\committeeMemberFourTypedName
 
