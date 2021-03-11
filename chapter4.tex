@@ -78,7 +78,7 @@ The proposed model takes as input two \gls{cqt}s---the monophonic vocal track's 
 The model is trained in a supervised manner. Training data consists of pairs of performances that are identical except for the vocals pitch. The backing track remains fixed, as it is when the singer performs in a karaoke setting. The input-target pairs, while required to train the model, are difficult to come across naturally. Hence, I synthesize them by detuning high-quality singing performances to construct the input signals, and then train the \gls{dnn} to predict the shifts that recover the original performances. Section \ref{sec:data-format-autotune} describes the de-tuning process.
 \begin{figure}[t!]
     \centering
-    \includegraphics[width=\columnwidth]{images/model_outline_extension.png}
+    \includegraphics[width=\columnwidth]{images/model_outline_extension_1.png}
     \caption{Model architecture with extension layer. A \gls{gru} sequentially processes the outputs for each note from the original \gls{dnn} and is followed by a linear layer that outputs note-wise shifts.}
     \label{fig:model_outline_extended}
 \end{figure}
